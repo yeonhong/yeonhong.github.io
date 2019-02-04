@@ -106,11 +106,11 @@ analytics:
 
 # Site Author
 author:
-  name             : "Your Name"
+  name             : "yeonhong"
   avatar           : # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
-  bio              : "I am an amazing person."
-  location         : "Somewhere"
-  email            :
+  bio              : "mobile game project manager/game developer"
+  location         : "republic of korea"
+  email            : "yeonhong84@gmail.com"
   links:
     - label: "Email"
       icon: "fas fa-fw fa-envelope-square"
