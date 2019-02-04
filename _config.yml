@@ -15,8 +15,8 @@ remote_theme             : "mmistakes/minimal-mistakes"
 minimal_mistakes_skin    : "default" # "air", "aqua", "contrast", "dark", "dirt", "neon", "mint", "plum", "sunrise"
 
 # Site Settings
-locale                   : "en-US"
-title                    : "yeonhong"
+locale                   : "ko-KR"
+title                    : "yeonhong's note"
 title_separator          : "-"
 name                     : "yeonhong"
 description              : "안녕하세요."
@@ -108,8 +108,8 @@ analytics:
 author:
   name             : "yeonhong"
   avatar           : # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
-  bio              : "mobile game project manager/game developer"
-  location         : "republic of korea"
+  bio              : "mobile game project manager and game developer"
+  location         : "republic of korea, seoul"
   email            : "yeonhong84@gmail.com"
   links:
     - label: "Email"
