@@ -4,7 +4,7 @@ date: 2019-02-04
 categories : default
 ---
 
-제목 형식은 요렇게 2019-02-04-test_post.md
+github project : https://github.com/mmistakes/minimal-mistakes
 
 이 사이트 원형. https://mmistakes.github.io/minimal-mistakes/#
 
