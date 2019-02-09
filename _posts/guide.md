@@ -19,6 +19,9 @@ print_hi('Tom')
 ​```
 
 Jekyll을 최대한 활용하는 방법에 대한 자세한 내용 아래를 참고
-[jekyll-docs]: https://jekyllrb.com/docs/home
-[jekyll-gh]:   https://github.com/jekyll/jekyll
-[jekyll-talk]: https://talk.jekyllrb.com/
+
+jekyll-docs: https://jekyllrb.com/docs/home
+
+jekyll-gh:   https://github.com/jekyll/jekyll
+
+jekyll-talk: https://talk.jekyllrb.com/
