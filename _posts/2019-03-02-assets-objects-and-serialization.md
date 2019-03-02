@@ -8,6 +8,7 @@ tags:
   - Assetbundle
   - Asset 관리
 ---
+[출처](https://unity3d.com/learn/tutorials/topics/best-practices/assets-objects-and-serialization?playlist=30089)
 
 이 장에서는 Unity의 직렬화 시스템의 깊은 내부 구조와 Unity가 Unity Editor와 런타임에서 서로 다른 객체간에 견고한 참조를 유지하는 방법에 대해 설명합니다. 또한 객체와 자산 간의 기술적 인 차이점에 대해서도 설명합니다. 여기에서 다루는 주제는 **Unity에서 자산을 효율적으로로드하고 언로드하는 방법을 이해하는 기본적인 사항입니다.** 적절한 자산 관리는 로딩 시간을 짧게하고 메모리 사용을 낮추는 데 중요합니다.
 
