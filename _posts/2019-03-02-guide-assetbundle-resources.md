@@ -6,6 +6,7 @@ categories:
 tags:
   - Unity
   - AssetBundle
+  - Asset 관리
 ---
 
 이것은 Unity 엔진에서 Assets 및 리소스 관리에 대한 심층적인 토론을 제공하는 일련의 기사입니다. Unity는 전문 개발자에게 Unity의 자산 및 serialization 시스템에 대한 깊이있는 소스 수준의 지식을 제공하고자합니다. 그것은 Unity의 AssetBundle 시스템의 기술적인 토대와 이를 사용하는 현재의 모범 사례를 모두 검토합니다.
