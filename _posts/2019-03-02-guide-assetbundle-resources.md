@@ -19,4 +19,5 @@ tags:
 
 > 참고 : 이 안내서의 객체 및 자산 용어는 Unity의 공용 API 명명 규칙과 다릅니다.
 
-이 가이드가 호출하는 데이터 객체는 AssetBundle.LoadAsset 및 Resources.UnloadUnusedAssets와 같은 많은 공용 Unity API에서 에셋이라고합니다. 이 가이드에서 자산이라고하는 파일은 공개 API에 거의 노출되지 않습니다. 노출되면 일반적으로 AssetDatabase 및 BuildPipeline과 같은 빌드 관련 코드에서만 사용됩니다. 이러한 경우 Public APIs 파일이라고합니다.
+이 가이드가 호출하는 데이터 객체는 [AssetBundle.LoadAsset](https://docs.unity3d.com/ScriptReference/AssetBundle.LoadAsset.html?_ga=2.31491769.60866194.1551365663-678518112.1480121168) 및 [Resources.UnloadUnusedAssets](https://docs.unity3d.com/ScriptReference/Resources.UnloadUnusedAssets.html?_ga=2.31491769.60866194.1551365663-678518112.1480121168)와 같은 많은 공용 Unity API에서 에셋이라고합니다. 
+이 가이드에서 자산이라고하는 파일은 공개 API에 거의 노출되지 않습니다. 노출되면 일반적으로 [AssetDatabase](https://docs.unity3d.com/ScriptReference/AssetDatabase.html?_ga=2.259565069.60866194.1551365663-678518112.1480121168) 및 [BuildPipeline](https://docs.unity3d.com/ScriptReference/BuildPipeline.html?_ga=2.259565069.60866194.1551365663-678518112.1480121168)과 같은 빌드 관련 코드에서만 사용됩니다. 이러한 경우 Public APIs 파일이라고합니다.
