@@ -18,7 +18,7 @@ tags:
 
 ## Assets, Resources and AssetBundles
 1. [A guide to AssetBundles and Resources](https://yeonhong.github.io/프로그래밍/guide-assetbundle-resources/)
-2. Assets, Objects and serialization
+2. [Assets, Objects and serialization](https://yeonhong.github.io/프로그래밍/assets-objects-and-serialization/)
 3. The Resources folder
 4. AssetBundle fundamentals
 5. AssetBundle usage patterns
