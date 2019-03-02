@@ -17,7 +17,7 @@ tags:
 1. [Physics Best Practices](https://yeonhong.github.io/프로그래밍/Physics-Best-Practices/)
 
 ## Assets, Resources and AssetBundles
-1. A guide to AssetBundles and Resources
+1. [A guide to AssetBundles and Resources](https://yeonhong.github.io/프로그래밍/guide-assetbundle-resources/)
 2. Assets, Objects and serialization
 3. The Resources folder
 4. AssetBundle fundamentals
