@@ -66,5 +66,94 @@ AssetBundle을 설치 중에 또는 이후에 제공할지 여부는 프로젝�
 적절한 아키텍처를 사용하면 처음에 AssetBundle을 전달하는 방법과 상관없이 프로젝트의 사후 설치에 새롭거나 수정 된 내용을 패치 할 수 있습니다. 이에 대한 더 자세한 정보는 Unity 매뉴얼의 [AssetBundles로 패치](https://docs.unity3d.com/Manual/AssetBundles-Patching.html?_ga=2.19443519.60866194.1551365663-678518112.1480121168)하기 섹션을 참조하십시오.
 
 ### 4.2.1. Shipped with project
+프로젝트와 함께 AssetBundles를 포함하는 것이 추가 다운로드 관리 코드가 필요 없으므로 가장 간단하게 배포 할 수 있습니다. 프로젝트에 AssetBundles를 설치할 수 있는 주요 이유는 두 가지입니다.
+* 프로젝트 구축 시간을 줄이고 반복 개발을 단순화합니다. 이러한 AssetBundle을 응용 프로그램과 별도로 업데이트 할 필요가없는 경우 AssetBundles를 Streaming Assets에 저장하여 응용 프로그램에 포함시킬 수 있습니다. 아래의 스트리밍 저작물 섹션을 참조하십시오.
+* 업데이트 할 수 있는 콘텐츠의 초기 버전을 제공합니다. 이는 일반적으로 초기 설치 후 최종 사용자 시간을 절약하거나 나중에 패치하기 위한 기초로 사용하기 위해 수행됩니다. 스트리밍 애셋은 이 경우에 이상적이지 않습니다. 그러나 사용자 정의 다운로드 및 캐싱 시스템을 작성하는 것이 옵션이 아닌 경우, 업데이트 할 수 있는 컨텐츠의 초기 개정을 Streaming Assets의 Unity 캐시에로드 할 수 있습니다.
 
+#### 4.2.1.1. Streaming Assets
+설치시 Unity 어플리케이션 내에 AssetBundles를 포함한 모든 유형의 컨텐츠를 포함시키는 가장 쉬운 방법은 프로젝트를 빌드하기 전에 / Assets / StreamingAssets / 폴더에 컨텐츠를 빌드하는 것입니다. 빌드시에 StreamingAssets 폴더에 포함 된 모든 내용이 최종 응용 프로그램에 복사됩니다.
 
+로컬 저장소의 StreamingAssets 폴더에 대한 전체 경로는 런타임에 [Application.streamingAssetsPath](https://docs.unity3d.com/ScriptReference/Application-streamingAssetsPath.html?_ga=2.228560410.60866194.1551365663-678518112.1480121168) 속성을 통해 액세스 할 수 있습니다. AssetBundle은 대부분의 플랫폼에서 AssetBundle.LoadFromFile을 통해로드 될 수 있습니다.
+
+**Android 개발의 경우** : Android에서는 StreamingAssets 폴더의 자산이 APK에 저장되므로 APK에 저장된 파일이 다른 저장소 알고리즘을 사용할 수 있으므로 압축 된 경우로드하는 데 시간이 더 걸릴 수 있습니다. 사용 된 알고리즘은 Unity 버전마다 다를 수 있습니다. 7-zip과 같은 아카이버를 사용하여 APK를 열어 파일 압축 여부를 결정할 수 있습니다. 그렇다면 AssetBundle.LoadFromFile ()이 더 느리게 수행 될 것으로 기대할 수 있습니다. 이 경우 해결 방법으로 UnityWebRequest.GetAssetBundle을 사용하여 캐시 된 버전을 검색 할 수 있습니다. **UnityWebRequest를 사용하면 AssetBundle이 첫 번째 실행 중에 압축 해제되고 캐시되므로 실행 속도가 빨라집니다.** AssetBundle이 캐시에 복사되므로 더 많은 저장 공간이 필요합니다. 또는 빌드 타임에 Gradle 프로젝트를 내보내고 AssetBundle에 확장을 추가 할 수 있습니다. 그런 다음 build.gradle 파일을 편집하고 해당 확장을 noCompress 섹션에 추가 할 수 있습니다. 끝나면 압축 해제 성능 비용을 지불하지 않고도 AssetBundle.LoadFromFile ()을 사용할 수 있어야합니다.
+
+_참고_ : 일부 플랫폼에서는 스트리밍 자산이 쓰기 가능한 위치가 아닙니다. 설치 후 프로젝트의 AssetBundle을 업데이트해야하는 경우 WWW.LoadFromCacheOrDownload를 사용하거나 사용자 정의 다운로더를 작성하십시오.
+
+### 4.2.2. Downloaded post-install
+AssetBundles를 휴대 기기에 전달하는 가장 좋은 방법은 앱 설치 후 앱 세트를 다운로드하는 것입니다. 또한 설치 후 사용자가 전체 응용 프로그램을 다시 다운로드하지 않고도 컨텐트를 업데이트 할 수 있습니다. 많은 플랫폼에서 애플리케이션 바이너리는 비싸고 오랜 시간이 걸리는 재 인증 프로세스를 거쳐야합니다. 따라서 설치 후 다운로드에 적합한 시스템을 개발하는 것이 중요합니다.
+
+AssetBundle을 전달하는 가장 간단한 방법은 웹 서버에 배치하고 UnityWebRequest를 통해 전달하는 것입니다. Unity는 다운로드 한 AssetBundle을 로컬 스토리지에 자동으로 캐시합니다. 다운로드 한 AssetBundle이 LZMA로 압축 된 경우, AssetBundle은 향후 로딩 속도를 높이기 위해 LZ4 ([Caching.compressionEnabled](https://docs.unity3d.com/ScriptReference/Caching-compressionEnabled.html?_ga=2.234325273.60866194.1551365663-678518112.1480121168) 설정에 따라 다름)로 비 압축 또는 다시 압축 된 형태로 캐시에 저장됩니다. 다운로드 한 번들이 LZ4로 압축되어 있으면 AssetBundle이 압축되어 저장됩니다. 캐시가 가득 차면 Unity는 가장 최근에 사용하지 않은 AssetBundle을 캐시에서 제거합니다.
+
+**가능한 경우 UnityWebRequest를 사용**하거나 Unity 5.2 또는 이전 버전을 사용하는 경우에만 WWW.LoadFromCacheOrDownload를 사용하여 시작하는 것이 좋습니다. 기본 제공 API의 메모리 소비, 캐싱 동작 또는 성능이 특정 프로젝트에 적합하지 않거나 요구 사항을 달성하기 위해 프로젝트가 플랫폼 별 코드를 실행해야하는 경우에만 맞춤형 다운로드 시스템에 투자하십시오.
+
+UnityWebRequest 또는 WWW.LoadFromCacheOrDownload의 사용을 방해 할 수있는 상황의 예 :
+* AssetBundle 캐시에 대한 세부적인 제어가 필요할 때
+* 프로젝트가 커스텀 압축 전략을 구현해야 할 때
+* 프로젝트가 비활성 상태에서 데이터를 스트리밍해야하는 것과 같이 특정 요구 사항을 충족시키기 위해 플랫폼 별 API를 사용하고자하는 경우.
+  * 예 : 백그라운드에서 iOS의 백그라운드 작업 API를 사용하여 데이터를 다운로드합니다.
+* AssetBundle이 Unity가 적절한 SSL 지원 (예 : PC)을 지원하지 않는 플랫폼에서 SSL을 통해 전달되어야하는 경우.
+
+### 4.2.3. Built-in caching
+Unity에는 AssetBundle 버전 번호를 인수로 받아들이는 오버로드를 가진 UnityWebRequest API를 통해 다운로드 된 AssetBundles를 캐시하는 데 사용할 수 있는 **내장 AssetBundle 캐싱 시스템이 있습니다.** 이 번호는 AssetBundle 내에 저장되지 않으며 AssetBundle 시스템에 의해 생성되지 않습니다.
+
+캐싱 시스템은 UnityWebRequest에 전달 된 마지막 버전 번호를 추적합니다. 이 API를 버전 번호와 함께 호출하면 캐싱 시스템은 버전 번호를 비교하여 캐시 된 AssetBundle이 있는지 확인합니다. 이 숫자가 일치하면 시스템은 캐시 된 AssetBundle을 로드합니다. 숫자가 일치하지 않거나 캐시 된 AssetBundle이 없으면 Unity는 새 사본을 다운로드합니다. 이 새로운 사본은 새 버전 번호와 연결됩니다.
+
+캐싱 시스템의 AssetBundles는 다운로드 된 전체 URL이 아니라 파일 이름으로 만 식별됩니다. 즉, 동일한 파일 이름을 가진 AssetBundle을 Content Delivery Network와 같이 여러 위치에 저장할 수 있습니다. 파일 이름이 동일하면 캐싱 시스템은 파일 이름을 동일한 AssetBundle로 인식합니다.
+
+AssetBundle에 버전 번호를 할당하는 적절한 전략을 결정하고 이러한 번호를 UnityWebRequest에 전달하는 것은 각 개별 응용 프로그램에 달려 있습니다. 번호는 CRC 값과 같은 일종의 고유 한 식별자에서 나올 수 있습니다. AssetBundleManifest.GetAssetBundleHash()도 이 용도로 사용할 수 있지만 실제로는 해시 계산이 아닌 추정을 제공하므로 버전 관리에이 함수를 사용하지 않는 것이 좋습니다.
+
+자세한 내용은 Unity 설명서의 [AssetBundles로 패치하기 섹션](https://docs.unity3d.com/Manual/AssetBundles-Patching.html?_ga=2.262563211.60866194.1551365663-678518112.1480121168)을 참조하십시오.
+
+**Unity 2017.1 이후 버전에서는 개발자가 여러 캐시에서 활성 캐시를 선택할 수있게하여 [Caching API](https://docs.unity3d.com/ScriptReference/Caching.html?_ga=2.262038154.60866194.1551365663-678518112.1480121168)가 보다 세부적인 제어를 제공하도록 확장되었습니다.** 이전 버전의 Unity는 캐시 된 항목을 제거하기 위해서만 Caching.expirationDelay와 Caching.maximumAvailableDiskSpace를 수정할 수 있습니다 (이러한 속성은 Cache 클래스의 Unity 2017.1에 남아 있습니다).
+
+expirationDelay는 AssetBundle이 자동으로 삭제되기 전에 경과해야하는 최소 시간(초)입니다. 이 시간 동안 AssetBundle에 액세스하지 않으면 자동으로 삭제됩니다.
+
+maximumAvailableDiskSpace는 캐시가 expirationDelay보다 최근에 사용되지 않은 AssetBundle을 삭제하기 전에 사용할 수있는 로컬 저장소의 공간 (바이트)을 지정합니다. 한도에 도달하면 Unity는 가장 최근에 열어 본 (또는 Caching.MarkAsUsed를 통해 사용 된 것으로 표시 한) 캐시에서 AssetBundle을 삭제합니다. Unity는 새로운 다운로드를 완료하기에 충분한 공간이 생길 때까지 캐시 된 AssetBundle을 삭제할 것입니다.
+
+#### 4.2.3.1. Cache Priming
+AssetBundles은 파일 이름으로 식별되기 때문에 응용 프로그램과 함께 제공되는 AssetBundles로 캐시를 "초기화"할 수 있습니다. 이렇게하려면 각 AssetBundle의 초기 또는 기본 버전을 / Assets / StreamingAssets /에 저장하십시오.
+
+응용 프로그램이 처음 실행될 때 Application.streamingAssetsPath에서 AssetBundles를 로드하여 캐시를 채울 수 있습니다. 그런 다음 응용 프로그램은 UnityWebRequest를 정상적으로 호출 할 수 있습니다 (UnityWebRequest는 초기에 StreamingAssets 경로에서 AssetBundles를로드하는데도 사용할 수 있습니다).
+
+### 4.2.3. Custom downloaders
+사용자 정의 다운로더를 작성하면 응용 프로그램이 AssetBundle의 다운로드, 압축 해제 및 저장 방법을 완벽하게 제어 할 수 있습니다. 관련 엔지니어링 작업이 중요하지 않으므로이 방법은 대규모 팀에만 권장됩니다. 사용자 정의 다운로더를 작성할 때 다음과 같은 4 가지 주요 고려 사항이 있습니다.
+* 다운로드 메커니즘
+* 저장 위치
+* 압축 유형
+* 패치
+
+#### 4.2.3.1. Downloading
+대부분의 응용 프로그램에서 HTTP는 AssetBundles를 다운로드하는 가장 간단한 방법입니다. 그러나 HTTP 기반 다운로더 구현은 가장 간단한 작업이 아닙니다. 사용자 다운로더는 과도한 메모리 할당, 과도한 스레드 사용 및 과도한 스레드 깨우기를 방지해야합니다. Unity의 WWW 클래스는 [여기](https://yeonhong.github.io/프로그래밍/assetbundle-fundamentals/)에 철저히 설명 된 이유로 부적합합니다.
+
+사용자 정의 다운로더를 작성할 때 세 가지 옵션이 있습니다.
+* C#'s HttpWebRequest and WebClient classes
+* Custom native plugins
+* Asset store packages
+
+##### 4.2.3.1.1. C# classes
+응용 프로그램에 HTTPS / SSL 지원이 필요하지 않은 경우 C #의 WebClient 클래스는 AssetBundles를 다운로드하는 가장 간단한 메커니즘을 제공합니다. 과도한 관리 메모리 할당없이 로컬 스토리지에 직접 모든 파일을 비동기 적으로 다운로드 할 수 있습니다.
+
+WebClient를 사용하여 AssetBundle을 다운로드하려면 클래스의 인스턴스를 할당하고 다운로드 할 AssetBundle의 URL과 대상 경로를 전달합니다. 요청의 매개 변수를 통해 더 많은 제어가 필요한 경우 C #의 HttpWebRequest 클래스를 사용하여 다운로더를 작성할 수 있습니다.
+1. HttpWebResponse.GetResponseStream로부터 바이트 스트림을 취득합니다.
+2. 스택에 고정 크기 바이트 버퍼를 할당하십시오.
+3. 응답 스트림에서 버퍼로 읽습니다.
+4. C#의 File.IO API 또는 다른 스트리밍 IO 시스템을 사용하여 디스크에 버퍼를 작성하십시오.
+
+##### 4.2.3.1.2. Asset Store Packages
+여러 자산 저장소 패키지는 HTTP, HTTPS 및 기타 프로토콜을 통해 파일을 다운로드하기위한 원시 코드 구현을 제공합니다. Unity에 대한 사용자 정의 원시 코드 플러그인을 작성하기 전에 사용 가능한 자산 저장소 패키지(Asset Store packages)를 평가하는 것이 좋습니다.
+
+##### 4.2.3.1.3. Custom Native Plugins
+커스텀 네이티브 플러그인을 작성하는 것은 시간 집약적이지만 Unity에서 데이터를 다운로드하는 가장 유연한 방법입니다. 높은 프로그래밍 시간 요구 사항 및 높은 기술 위험으로 인해이 방법은 응용 프로그램의 요구 사항을 충족시킬 수있는 다른 방법이없는 경우에만 권장됩니다. 예를 들어, 응용 프로그램이 Unity에서 C # SSL 지원없이 플랫폼에서 SSL 통신을 사용해야하는 경우 사용자 지정 네이티브 플러그인이 필요할 수 있습니다.
+
+맞춤 네이티브 플러그인은 일반적으로 대상 플랫폼의 기본 다운로드 API를 래핑합니다. 예로는 iOS에서는 NSURLConnection이, Android에서는 java.net.HttpURLConnection이 있습니다. 이러한 API 사용에 대한 자세한 내용은 각 플랫폼의 기본 설명서를 참조하십시오.
+
+#### 4.2.3.2. Storage
+**모든 플랫폼에서 Application.persistentDataPath는 응용 프로그램 실행간에 유지되어야하는 데이터를 저장하는 데 사용해야하는 쓰기 가능한 위치를 가리 킵니다.** 사용자 정의 다운로더를 작성할 때는 Application.persistentDataPath의 하위 디렉토리를 사용하여 다운로드 한 데이터를 저장하는 것이 좋습니다.
+
+Application.streamingAssetPath는 쓰기가 가능하지 않으며 AssetBundle 캐시에 적합하지 않습니다. streamingAssetsPath의 위치는 다음과 같습니다.
+* OSX : .app 패키지 내. 쓸 수 없습니다.
+* Windows : 설치 디렉토리 (예 : 프로그램 파일); 대개 쓰기 불가
+* iOS : .ipa 패키지 내. 쓸 수 없다
+* Android : .apk 파일 내. 쓸 수 없다
+
+## 4.3. Asset Assignment Strategies
