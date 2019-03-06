@@ -24,7 +24,7 @@ tags:
 5. [AssetBundle usage patterns](https://yeonhong.github.io/프로그래밍/assetBundle-usage-patterns/)
 
 ## Optimizing Unity UI
-1. A guide to optimizing Unity UI
+1. [A guide to optimizing Unity UI](https://yeonhong.github.io/프로그래밍/A-guide-to-optimizing-Unity-UI/)
 2. Fundamentals of Unity UI
 3. Unity UI Profiling Tools
 4. Fill-rate, Canvases and input
