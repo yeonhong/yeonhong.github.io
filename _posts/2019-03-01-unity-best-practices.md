@@ -21,7 +21,7 @@ tags:
 2. [Assets, Objects and serialization](https://yeonhong.github.io/프로그래밍/assets-objects-and-serialization/)
 3. [The Resources folder](https://yeonhong.github.io/프로그래밍/the-resources-folder/)
 4. [AssetBundle fundamentals](https://yeonhong.github.io/프로그래밍/assetbundle-fundamentals/)
-5. AssetBundle usage patterns
+5. [AssetBundle usage patterns](https://yeonhong.github.io/프로그래밍/assetBundle-usage-patterns/)
 
 ## Optimizing Unity UI
 1. A guide to optimizing Unity UI
