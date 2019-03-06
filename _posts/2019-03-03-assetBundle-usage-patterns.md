@@ -157,3 +157,98 @@ Application.streamingAssetPath는 쓰기가 가능하지 않으며 AssetBundle �
 * Android : .apk 파일 내. 쓸 수 없다
 
 ## 4.3. Asset Assignment Strategies
+프로젝트의 자산을 AssetBundle로 분할하는 방법을 결정하는 것은 간단하지 않습니다. 모든 객체를 자신의 AssetBundle에 배치하거나 단일 AssetBundle 만 사용하는 것과 같은 단순한 전략을 채택하는 것이 유혹적이지만 이러한 솔루션에는 다음과 같은 중요한 단점이 있습니다.
+
+* AssetBundles가 너무 적을 경우
+  * 런타임 메모리 사용량 증가
+  * 로딩 시간 증가
+  * 더 큰 다운로드 storage 필요
+* AssetBundles가 너무 많을 경우
+  * 빌드 시간 증가
+  * 개발을 복잡하게 할 수있다.
+  * 총 다운로드 시간 증가
+
+주요 결정은 AssetBundles로 객체를 그룹화하는 방법입니다. 주요 전략은 다음과 같습니다.
+* 논리적으로 관계가 가까운 것 끼리.
+* Object Type
+* Concurrent content (같이 있는 컨텐츠)
+
+이러한 그룹 전략에 대한 자세한 내용은 [매뉴얼](https://docs.unity3d.com/Manual/AssetBundles-Preparing.html?_ga=2.25079229.60866194.1551365663-678518112.1480121168)에 나와 있습니다.
+
+## 4.4. Common pitfalls (일반적인 함정)
+이 섹션에서는 AssetBundles를 사용하여 프로젝트에 일반적으로 나타나는 몇 가지 문제에 대해 설명합니다.
+
+### 4.5.1. Asset duplication
+nity 5의 AssetBundle 시스템은 Object가 AssetBundle에 내장 될 때 Object의 모든 종속성을 발견합니다. 이 종속성 정보는 AssetBundle에 포함될 객체 세트를 결정하는 데 사용됩니다.
+
+AssetBundle에 명시 적으로 할당 된 객체는 해당 AssetBundle에만 내장됩니다. Object의 AssetImporter의 assetBundleName 속성이 비어 있지 않은 문자열로 설정된 경우 객체는 "명시적으로"할당됩니다. 이는 Unity Insightor 또는 Editor 스크립트에서 AssetBundle을 선택하여 Unity Editor에서 수행 할 수 있습니다.
+
+객체는 AssetBundle 빌딩 맵의 일부로 정의하여 AssetBundle에 할당 할 수 있습니다.이 맵은 [AssetBundleBuild](https://docs.unity3d.com/ScriptReference/AssetBundleBuild.html?_ga=2.23093693.60866194.1551365663-678518112.1480121168) 배열을 사용하는 오버로드 된 [BuildPipeline.BuildAssetBundles()](https://docs.unity3d.com/ScriptReference/BuildPipeline.BuildAssetBundles.html?_ga=2.23093693.60866194.1551365663-678518112.1480121168) 함수와 함께 사용됩니다.
+
+**_AssetBundle에 명시 적으로 할당되지 않은 객체는 태그가없는 객체를 참조하는 하나 이상의 객체가 포함 된 모든 AssetBundle에 포함됩니다._**
+
+예를 들어, 두 개의 서로 다른 객체가 두 개의 다른 AssetBundle에 할당되었지만 **둘 다 공통 종속 객체에 대한 참조가 있는 경우 해당 종속 객체가 두 개의 AssetBundle에 복사됩니다.** 중복 된 종속성도 인스턴스화됩니다. 즉, 종속성 객체의 두 사본이 다른 식별자를 가진 다른 객체로 간주됩니다. 그러면 응용 프로그램의 AssetBundle의 전체 크기가 증가합니다. 또한 응용 프로그램에서 부모를 모두 로드하는 경우 두 개의 Object 사본이 메모리에로드됩니다.
+
+이 문제를 해결할 수 있는 몇 가지 방법이 있습니다.
+
+1. 다른 AssetBundle에 내장 된 객체가 종속성을 공유하지 않도록하십시오. 종속성을 공유하는 객체는 종속성을 복제하지 않고 동일한 AssetBundle에 배치 할 수 있습니다.
+  * 이 방법은 일반적으로 많은 공유 종속성이있는 프로젝트에서는 실행 가능하지 않습니다. 편리하고 효율적으로 만들기 위해 너무 자주 다시 빌드하고 다시 다운로드해야하는 모놀리식(하나로 뭉쳐져버린) AssetBundles를 생성합니다.
+2. 종속성을 공유하는 두 개의 AssetBundle이 동시에로드되지 않도록 AssetBundles를 분할합니다.
+  * 이 방법은 레벨 기반 게임과 같은 특정 유형의 프로젝트에서 작동 할 수 있습니다. 그러나 여전히 프로젝트의 AssetBundle 크기가 불필요하게 증가하고 빌드 시간과 로딩 시간이 모두 증가합니다.
+3. 모든 종속성 자산이 자체 AssetBundle에 빌드 되었는지 확인하십시오. 이는 중복 자산의 위험을 완전히 없애지만 복잡성을 초래합니다. 응용 프로그램은 AssetBundle 간의 종속성을 추적하고 AssetBundle.LoadAsset API를 호출하기 전에 올바른 AssetBundle이 로드되는지 확인해야합니다.
+
+객체 의존성은 UnityEditor 네임 스페이스에있는 AssetDatabase API를 통해 추적됩니다. 네임 스페이스가 암시 하듯이이 API는 Unity Editor에서만 사용할 수 있으며 런타임에는 사용할 수 없습니다. **AssetDatabase.GetDependencies는 특정 Object 또는 Asset의 모든 즉각적인 종속성을 찾는 데 사용할 수 있습니다. 이러한 종속성에는 고유 한 종속성이있을 수 있습니다. 또한 AssetImporter API를 사용하여 특정 Object가 할당 된 AssetBundle을 쿼리 할 수 있습니다.**
+
+AssetDatabase 및 AssetImporter API를 결합하여 모든 AssetBundle의 직접 또는 간접 종속성이 AssetBundle에 할당되도록하거나 AssetBundle이 AssetBundle에 할당되지 않은 종속성을 공유하지 않도록하는 Editor 스크립트를 작성할 수 있습니다. 자산을 복제하는 데 드는 메모리 비용 때문에 모든 프로젝트에 그러한 스크립트가있는 것이 좋습니다.
+
+### 4.5.2. Sprite atlas duplication
+자동으로 생성 된 스프라이트 아틀라스는 스프라이트 아틀라스가 생성 된 스프라이트 객체가 포함 된 AssetBundle에 할당됩니다. 스프라이트 객체가 여러 개의 AssetBundle에 할당 된 경우 스프라이트 아틀라스는 AssetBundle에 할당되지 않고 복제됩니다. 스프라이트 객체가 AssetBundle에 할당되지 않은 경우 스프라이트 아틀라스는 AssetBundle에도 할당되지 않습니다.
+
+스프라이트 아틀라스가 중복되지 않도록하려면 같은 스프라이트 아틀라스에 태그 된 모든 스프라이트가 동일한 AssetBundle에 할당되어 있는지 확인하십시오.
+
+### 4.5.3. Android textures
+Android 생태계에서 장치가 대량으로 조각화되어 있기 때문에 텍스처를 여러 가지 형식으로 압축해야하는 경우가 있습니다. 모든 Android 기기가 ETC1을 지원하지만 ETC1은 알파 채널이있는 텍스처를 지원하지 않습니다. 응용 프로그램이 OpenGL ES 2 지원을 필요로하지 않는 경우 문제를 해결하는 가장 깨끗한 방법은 모든 Android OpenGL ES 3 장치에서 지원되는 ETC2를 사용하는 것입니다.
+
+대부분의 응용 프로그램은 ETC2 지원을 사용할 수없는 구형 장치에서 제공해야합니다. 이 문제를 해결하는 한 가지 방법은 Unity 5의 AssetBundle Variant (다른 옵션에 대한 자세한 내용은 Unity의 Android 최적화 가이드 참조)입니다.
+
+AssetBundle Variant를 사용하려면 ETC1을 사용하여 깨끗하게 압축 할 수없는 모든 텍스처를 텍스처 전용 AssetBundle로 분리해야합니다. 다음으로 DXT5, PVRTC 및 ATITC와 같은 공급 업체별 텍스처 압축 형식을 사용하여 Android 생태계의 비 ETC2 가능 슬라이스를 지원하기 위해 이러한 AssetBundle의 변형을 만듭니다. 각 AssetBundle Variant에 대해 포함 된 텍스처의 TextureImporter 설정을 Variant에 적합한 압축 포맷으로 변경합니다.
+
+런타임시 [SystemInfo.SupportsTextureFormat API](https://docs.unity3d.com/ScriptReference/SystemInfo.SupportsTextureFormat.html?_ga=2.263236875.60866194.1551365663-678518112.1480121168)를 사용하여 다양한 텍스처 압축 형식에 대한 지원을 감지 할 수 있습니다. 이 정보는 지원되는 형식으로 압축 된 텍스처가 포함 된 AssetBundle Variant를 선택하고로드하는 데 사용해야합니다.
+
+Android 텍스처 압축 형식에 대한 자세한 내용은 [여기](https://developer.android.com/guide/topics/graphics/opengl.html#textures)를 참조하십시오.
+
+### 4.5.4. iOS file handle overuse(과용)
+현재 버전의 Unity는이 문제의 영향을받지 않습니다.
+
+## 4.5. AssetBundle Variants(다양성, 변형)
+AssetBundle 시스템의 핵심 기능은 AssetBundle Variant를 도입한 것입니다. Variants의 목적은 응용 프로그램이 런타임 환경에 더 잘 맞게 내용을 조정할 수 있게하는 것입니다. 변형은 객체를 로드하고 인스턴스 ID 참조를 해석 할 때 서로 다른 AssetBundle 파일의 서로 다른 UnityEngine.Object가 "동일한"객체로 나타날 수있게합니다. 개념적으로 두 개의 UnityEngine.Objects가 동일한 파일 GUID 및 로컬 ID를 공유하는 것처럼 보이게 하고 실제 UnityEngine.Object를 식별하여 문자열 Variant ID로 로드합니다.
+
+이 시스템에는 두 가지 기본 사용 사례가 있습니다.
+1. 변형은 주어진 플랫폼에 적합한 AssetBundle의 로드를 단순화합니다.
+  * 예 : 빌드 시스템은 독립 실행 형 DirectX11 Windows 빌드에 적합한 고해상도 텍스처와 복잡한 쉐이더를 포함하는 AssetBundle을 만들고 안드로이드를위한 더 낮은 품질의 컨텐트를 가진 두 번째 AssetBundle을 만들 수 있습니다. 런타임에 프로젝트의 리소스 로딩 코드는 해당 플랫폼에 적합한 AssetBundle Variant를로드 할 수 있으며 AssetBundle.Load API에 전달 된 Object 이름은 변경할 필요가 없습니다.
+2. 변형을 사용하면 응용 프로그램이 동일한 플랫폼에서 다른 하드웨어로 다른 내용을 로드 할 수 있습니다.
+  * 이것은 광범위한 모바일 장치를 지원하는 데 핵심입니다. iPhone4는 모든 실제 응용 프로그램에서 최신 iPhone과 동일한 충실도의 콘텐츠를 표시 할 수 없습니다.
+  * 안드로이드에서, AssetBundle Variants는 화면 종횡비와 DPI의 장치 간 엄청난 분열을 해결하는 데 사용할 수 있습니다.
+
+### 4.5.1. Limitations (한계)
+AssetBundle Variant 시스템의 핵심 한계는 Variants가 별개의 Assets으로 구축되어야한다는 것입니다. 이 제한은 해당 애셋 간의 변형 만 가져 오기 설정 인 경우에도 적용됩니다. 변형 A와 변형 B에 내장 된 텍스처 사이의 유일한 차이가 Unity 텍스처 가져 오기에서 선택한 특정 텍스처 압축 알고리즘 인 경우 변형 A와 변형 B는 여전히 완전히 다른 자산이어야합니다. 즉, 변형 A와 변형 B는 디스크의 개별 파일이어야합니다.
+
+이 제한은 특정 프로젝트의 여러 사본을 소스 제어에 보관해야하므로 대규모 프로젝트 관리를 복잡하게 만듭니다. 개발자가 저작물의 내용을 변경하고자 할 때 모든 저작물 사본을 업데이트해야합니다. 이 문제점에 대한 기본 제공 조치가 없습니다.
+
+대부분의 팀은 자신의 AssetBundle Variant 형식을 구현합니다. 이는 주어진 AssetBundle이 나타내는 특정 변형을 식별하기 위해 파일 이름에 잘 정의 된 접미사가 추가 된 AssetBundles를 작성하여 수행됩니다. 사용자 정의 코드는 이러한 AssetBundle을 빌드 할 때 포함 된 Assets의 임포터 설정을 프로그래밍 방식으로 변경합니다. 일부 개발자는 사용자 정의 시스템을 확장하여 프리팹에 부착 된 구성 요소의 매개 변수를 변경할 수도 있습니다.
+
+## 4.6. Compressed or uncompressed?
+AssetBundles를 압축할지 여부는 몇 가지 중요한 고려 사항이 필요합니다.
+* 로딩 시간 : 비압축 AssetBundle은 로컬 스토리지 또는 로컬 캐시에서로드 할 때 압축 AssetBundle보다 로드가 빠릅니다.
+* 빌드 시간 : 파일 압축시 LZMA 및 LZ4가 매우 느리며 유니티 에디터가 AssetBundles를 순차적으로 처리합니다. AssetBundle이 많은 프로젝트는 압축하는 데 많은 시간을 소비합니다.
+* 응용 프로그램 크기 : 응용 프로그램에서 AssetBundle을 제공하는 경우,이를 압축하면 응용 프로그램의 전체 크기가 줄어 듭니다. 또는 AssetBundle을 설치 후 다운로드 할 수 있습니다.
+* 메모리 사용 : Unity 5.3 이전에는 Unity의 모든 압축 해제 메커니즘이 압축 된 AssetBundle을 압축 해제하기 전에 메모리에 로드해야 했습니다. 메모리 사용이 중요한 경우 비 압축 또는 LZ4 압축 AssetBundles를 사용하십시오.
+* 다운로드 시간 : AssetBundles가 크거나 사용자가 저속 또는 계량 연결을 통해 다운로드하는 것과 같이 대역폭이 제한된 환경에 있는 경우에만 압축이 필요할 수 있습니다. 고속 연결을 통해 수십 메가 바이트의 데이터 만 PC에 전달되는 경우 압축을 생략 할 수 있습니다.
+
+### 4.6.1. Crunch Compression
+크런치 압축 알고리즘을 사용하는 DXT 압축 텍스처로 주로 구성된 번들은 압축되지 않은 상태로 만들어야합니다.
+
+## 4.7. AssetBundles and WebGL
+WebGL 프로젝트의 모든 AssetBundle 압축 해제 및 로딩은 Unity의 WebGL 내보내기 옵션이 현재 작업자 스레드를 지원하지 않기 때문에 주 스레드에서 수행되어야합니다. AssetBundles의 다운로드는 XMLHttpRequest를 사용하여 브라우저에 위임됩니다. 일단 다운로드되면 압축 된 AssetBundles가 Unity의 메인 스레드에서 압축 해제 될 것이므로 번들의 크기에 따라 Unity 컨텐츠의 실행이 지연됩니다.
+
+Unity는 개발자가 성능 문제를 피하기 위해 작은 자산 묶음을 선호한다고 권장합니다. 이 방법은 대규모 자산 번들을 사용하는 것보다 훨씬 효율적입니다. Unity WebGL은 LZ4 압축 및 압축 해제 자산 번들 만 지원하지만 Unity에 의해 생성 된 번들에는 gzip / brotli 압축을 적용 할 수 있습니다. 이 경우 브라우저에서 파일을 다운로드 할 때 압축 해제되도록 웹 서버를 적절하게 구성해야합니다. 자세한 내용은 여기를 참조하십시오.
