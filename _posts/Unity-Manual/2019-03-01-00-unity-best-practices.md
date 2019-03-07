@@ -1,16 +1,16 @@
 ---
-layout: single
+## layout: single
 title: "Unity Best Practices 정리"
 categories: 
   - 프로그래밍
 tags:
   - Unity
   - Optimaze
+link: https://unity3d.com/learn/tutorials/s/best-practices
+classes: wide
 ---
-[출처](https://unity3d.com/learn/tutorials/s/best-practices)
 
 # Best Practices
-
 유니티 서포트 엔지니어가 제작 한 최상의 테스트 사례들.
 
 ## Lessons
