@@ -7,10 +7,8 @@ tags:
   - Unity
   - Physics
   - Optimaze
+link: https://unity3d.com/learn/tutorials/topics/physics/physics-best-practices?playlist=30089
 ---
-
-[출처](https://unity3d.com/learn/tutorials/topics/physics/physics-best-practices?playlist=30089)
-
 이 레슨에서는 게임에서 Physics을 사용할때의 모범사례와 왜 사용해야 하는지를 보여주는 몇 가지 단서를 살펴볼 것입니다.
 
 ## Layers and Collision Matrix

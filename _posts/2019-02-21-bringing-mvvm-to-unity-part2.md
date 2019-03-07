@@ -7,9 +7,8 @@ tags:
   - Unity
   - MVVM
   - Design Pattern
+link: http://www.what-could-possibly-go-wrong.com/bringing-mvvm-to-unity-part-2-property-and-event-bindings/
 ---
-
-[출처](http://www.what-could-possibly-go-wrong.com/bringing-mvvm-to-unity-part-2-property-and-event-bindings/)
 
 ## Bringing MVVM to Unity - Part 2: Property and event bindings
 

@@ -6,9 +6,8 @@ categories:
 tags:
   - TDD
   - Unity
+link: https://blogs.unity3d.com/kr/2018/11/02/testing-test-driven-development-with-the-unity-test-runner/
 ---
-
-[출처 : blogs.unity3d](https://blogs.unity3d.com/kr/2018/11/02/testing-test-driven-development-with-the-unity-test-runner/)
 
 > 테스트 주도 개발 (TDD)은 코드 자체를 작성하기 전에 코드 조각에 대한 자동화 된 테스트를 작성하는 관행입니다. 이 블로그 게시물에서는 동료와 내가 TDD를 (코드 스니펫을 사용하여) 게임을 만드는 데 어떻게 사용했는지, 그리고 잘된 점과 그렇지 않은 점을 설명 할 것입니다. TDD는 완전히 수정 된 것은 아니지만 우리는 많은 것을 배웠고 더 나은 개발자가되었습니다. Unity에서 NUnit 테스트를 작성하고 실행하는 시스템 인 Unity Test Runner를 프로젝트에 사용했습니다.
 

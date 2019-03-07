@@ -6,9 +6,8 @@ categories:
 tags:
   - Design Pattern
   - MVVM
+link: https://docs.microsoft.com/en-us/previous-versions/msp-n-p/hh848246(v=pandp.10)
 ---
-
-[원본링크](https://docs.microsoft.com/en-us/previous-versions/msp-n-p/hh848246(v=pandp.10))
 
 ## 소개
 MVVM 패턴은 Silverlight와 같은 XAML 응용 프로그램 플랫폼에 자연스럽게 적합합니다. 이는 MVVM 패턴이 데이터 바인딩, 명령 및 동작과 같은 Silverlight의 특정 기능을 활용하기 때문입니다. MVVM은 UI의 모양과 레이아웃에 대한 책임을 표현 논리에 대한 책임과 분리하는 많은 다른 패턴과 유사합니다. 예를 들어 MVC (Model-View-Controller) 패턴에 익숙하다면 MVVM에는 많은 유사한 개념이 있다는 것을 알 수 있습니다.

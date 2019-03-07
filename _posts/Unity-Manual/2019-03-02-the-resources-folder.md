@@ -6,9 +6,8 @@ categories:
 tags:
   - Unity
   - Asset 관리
+link: https://unity3d.com/learn/tutorials/topics/best-practices/resources-folder?playlist=30089
 ---
-[출처](https://unity3d.com/learn/tutorials/topics/best-practices/resources-folder?playlist=30089)
-
 이 장에서는 Resources 시스템에 대해 설명합니다. 이것은 개발자가 Resources라는 하나 이상의 폴더에 Assets을 저장하고 Resources API를 사용하여 런타임에 해당 Assets에서 Object를 로드/언로드 할 수 있게 해주는 시스템입니다.
 
 ## 2.1. Best Practices for the Resources System

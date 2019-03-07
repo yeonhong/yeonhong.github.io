@@ -7,10 +7,8 @@ tags:
   - Unity
   - Optimaze
   - Unity UI
+link: https://unity3d.com/learn/tutorials/topics/best-practices/fundamentals-unity-ui?playlist=30089
 ---
-
-[출처](https://unity3d.com/learn/tutorials/topics/best-practices/fundamentals-unity-ui?playlist=30089)
-
 Unity UI 시스템을 구성하는 여러 부분을 이해하는 것이 중요합니다. 함께 시스템을 구성하는 몇 가지 기본 클래스와 component가 있습니다. 이 장에서는 먼저 이 연재 기사 전반에 걸쳐 사용 된 여러 용어를 정의한 다음 Unity UI의 주요 시스템에 대한 하위 수준 동작에 대해 설명합니다.
 
 # Terminology (용어정리)

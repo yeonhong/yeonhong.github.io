@@ -6,8 +6,8 @@ categories:
 tags:
   - Unity
   - Assetbundle
+link: https://unity3d.com/learn/tutorials/topics/best-practices/assetbundle-fundamentals?playlist=30089
 ---
-
 이 장에서는 AssetBundles에 대해 설명합니다. AssetBundles가 구축되는 기본 시스템과 AssetBundles와 상호 작용하는 데 사용되는 핵심 API를 소개합니다. 특히, AssetBundles 자체의로드 및 언로드와 AssetBundle에서 특정 Asset 및 Objects로드 및 언로드에 대해 설명합니다.
 
 ## 3.1. Overview

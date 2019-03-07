@@ -6,9 +6,8 @@ categories:
 tags:
   - Unity
   - 멀티스레드
+link: https://blogs.unity3d.com/kr/2019/02/26/on-dots-c-c/
 ---
-
-[출처](https://blogs.unity3d.com/kr/2019/02/26/on-dots-c-c/)
 
 ## Introduce
 

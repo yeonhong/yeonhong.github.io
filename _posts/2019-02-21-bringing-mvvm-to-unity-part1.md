@@ -7,10 +7,8 @@ tags:
   - Unity
   - MVVM
   - Design Pattern
+link: http://www.what-could-possibly-go-wrong.com/bringing-mvvm-to-unity-part-1-about-mvvm-and-unity-weld/
 ---
-
-[출처](http://www.what-could-possibly-go-wrong.com/bringing-mvvm-to-unity-part-1-about-mvvm-and-unity-weld/)
-
 ## Bringing MVVM to Unity - part 1: About MVVM and Unity-Weld
 
 Unity-Weld는 UI 계층을 구현하는 코드와 Unity 계층 구조 사이의 접착제입니다. 그것은 당신의 UI의 부분들을 묶어줍니다. 그것들은 그것들을 조정하고 그들이 의사 소통하도록 허락합니다. Unity all-Weld의 장점은 간단합니다. 배우기 쉽고 사용하기 쉽습니다. 그것은 Unity와 잘 작동하고 Unity의 UI 시스템에 맞는 것처럼 느껴집니다.

@@ -6,8 +6,8 @@ categories:
 tags:
   - Unity
   - Assetbundle
+link: https://unity3d.com/learn/tutorials/topics/best-practices/assetbundle-usage-patterns?playlist=30089
 ---
-[출처](https://unity3d.com/learn/tutorials/topics/best-practices/assetbundle-usage-patterns?playlist=30089)
 
 이 시리즈의 이전 장에서는 다양한 로딩 API의 저수준 동작을 포함하는 AssetBundles의 기본 사항에 대해 설명했습니다. 이 장에서는 실제로 AssetBundles를 사용하는 다양한 측면에 대한 문제와 잠재적 인 솔루션에 대해 설명합니다.
 
