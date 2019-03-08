@@ -117,13 +117,13 @@ UiPresenter 클래스에서 새로운 플레이어를 소개합니다.
 
 ReactiveProperty는 Observable의 특별한 종류이며 Reactive Properties라는 기본 클래스가 만들어집니다. Observable을 **값의 흐름(stream of values)**으로 생각할 수 있습니다.
 
-!(https://cdn-images-1.medium.com/max/800/1*NHginaEr1rpQgm_5iwZLMA.png)
+![no-alignment](https://cdn-images-1.medium.com/max/800/1*NHginaEr1rpQgm_5iwZLMA.png)
 
 6개의 Observables가 보입니다.
 
 관찰 대상이 무엇인지 이해하려면 지금해야 할 일은 그림에 시간을 더하는 것입니다. 게임이 한 장씩 진행되는 것을 상상해보십시오. 관측 대상이 독립적으로 공을 방출합니다. 다음 이미지에서 우리는 관측 가능한 각 홀에 대해 이것을 봅니다. 다이어그램의 X 축은 앞으로 나아갈 시간입니다.
 
-!(https://cdn-images-1.medium.com/max/800/1*jKlUkPH4sf-5fjPJxQCkFw.png)
+![no-alignment](https://cdn-images-1.medium.com/max/800/1*jKlUkPH4sf-5fjPJxQCkFw.png)
 
 좋아, observables은 시간이 지남에 따라 값의 흐름이다. 이제는 선언적 프로그래밍에 관한 그 모든 것이 무엇 이었습니까?
 
@@ -131,7 +131,7 @@ ReactiveProperty는 Observable의 특별한 종류이며 Reactive Properties라�
 
 우리의 사례로 돌아가서 풀 공 중 하나에서 풀 공이 사라지면 어떻게되는지 생각해보십시오. 그들은 테이블 아래에있는 어떤 경로를 따라 굴러 가기 시작합니다. 그리고이 예제를 위해 - 하나의 연속 행으로 끝나야한다고 가정 해 봅시다. 그래서 우리가 원하는 것은 이것입니다 :
 
-!(https://cdn-images-1.medium.com/max/800/1*BWDr4QR2YmS3SmwR7wkWag.png)
+![no-alignment](https://cdn-images-1.medium.com/max/800/1*BWDr4QR2YmS3SmwR7wkWag.png)
 
 이제 이 동작을 설명하기 위해 Reactive Extensions에서 제공하는 **선언적 언어**를 다음과 같이 사용할 수 있습니다.
 
