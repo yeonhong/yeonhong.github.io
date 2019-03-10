@@ -6,6 +6,8 @@ categories:
   - 프로그래밍
 tags:
   - Reactive Programming
+  - UniRX
+  - Unity
 link: https://medium.com/@urschanselmann/reactive-programming-an-introduction-for-game-developers-f7da00edb424
 ---
 
