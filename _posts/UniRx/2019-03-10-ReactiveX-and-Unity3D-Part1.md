@@ -1,7 +1,7 @@
 ---
 layout: single
 title: "ReactiveX and Unity3D: Part 1"
-related: false
+related: true
 categories: 
   - 프로그래밍
 tags:
@@ -84,7 +84,7 @@ Movement Observable에 대한 참조를 얻은 후에, 우리는 아주 단순�
 
 그런 다음 Observable에서 새로운 가치가있을 때마다 호출 할 함수를 제공하여 구독합니다. 이 함수에서 단순히 플레이어의 보행 속도를 곱하고 2D 입력을 플레이어의 3D 좌표계로 변환하고 시간을 곱하여 거리를 구하며 CharacterController를 사용하여 운동을 적용합니다.
 
-마지막으로, **UniRx 세부 정보를 AddTo (this)라고 부릅니다. Observables 및 구독 (Observers)이 살아있는 것임을 아는 것이 중요합니다.** 신호가 계속되는 한, 그들은 다 행복하게 계속 처리 할 것입니다. Observables는 오류를 완료하거나 생성 할 수 있지만, 현재로서는 다루지 않습니다. 메모리와 낭비되는 처리 능력을 누설하지 않으려면 게임 객체가 파괴 될 때 정리해야합니다. 그것이 AddTo (이)가 우리를 위해하는 것입니다. 기본적으로 PlayerController의 게임 객체가 파기되면 구독을 처리합니다. 이것은 Observable, Movement를 처리하지 않는다. Movement가 해당 객체의 Fixed Update Observable에서 시작 되었기 때문에 Inputs 게임 객체가 파괴 될 때 처리됩니다.
+마지막으로, **UniRx 세부 정보를 AddTo(this)라고 부릅니다. Observables 및 구독 (Observers)이 살아있는 것임을 아는 것이 중요합니다.** 신호가 계속되는 한, 그들은 다 행복하게 계속 처리 할 것입니다. Observables는 오류를 완료하거나 생성 할 수 있지만, 현재로서는 다루지 않습니다. 메모리와 낭비되는 처리 능력을 누설하지 않으려면 게임 객체가 파괴 될 때 정리해야합니다. 그것이 AddTo (이)가 우리를 위해하는 것입니다. 기본적으로 PlayerController의 게임 객체가 파기되면 구독을 처리합니다. 이것은 Observable, Movement를 처리하지 않는다. Movement가 해당 객체의 Fixed Update Observable에서 시작 되었기 때문에 Inputs 게임 객체가 파괴 될 때 처리됩니다.
 
 ## 내 생각
 react는 명령형에서 선언적 언어로 바꾸는 패러다임이다. 내가 원하는 동작을 작성하는 것으로 구현을 한다는 개념.
