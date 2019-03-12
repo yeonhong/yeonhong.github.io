@@ -73,7 +73,7 @@ INotifyPropertyChanged 인터페이스는 뷰 모델과 뷰 간의 속성 동기
 
 Binding Attribute는 UI에 데이터 바인딩 될 속성에 주석을 추가합니다.
 
-​```
+​```csharp
 [Binding]
 public string Text
 {
@@ -97,7 +97,7 @@ public string Text
 
 이러한 속성에 대한 설정자는 PropertyChanged 이벤트를 발생시킵니다. 여기에 사용 된 OnPropertyChanged는 이벤트를 발생시키는 헬퍼 메서드입니다.
 
-```
+```csharp
 private void OnPropertyChanged(string propertyName)
 {
     if (PropertyChanged != null)

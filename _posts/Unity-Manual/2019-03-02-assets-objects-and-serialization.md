@@ -36,7 +36,7 @@ Asset과 Object 간에는 일대-다관계가 있습니다. 즉, **주어진 자
 텍스트 편집기를 사용하여 재질과 관련된 .meta 파일을 엽니 다. "guid"라고 표시된 줄이 파일의 맨 위에 나타납니다. 이 행은 Material Asset의 File GUID를 정의합니다. 로컬 ID를 찾으려면 텍스트 편집기에서 재질 파일을 엽니 다. Material 객체의 
 정의는 다음과 같습니다.
 
-```
+```csharp
 --- !u!21 &2100000
 Material:
  serializedVersion: 3

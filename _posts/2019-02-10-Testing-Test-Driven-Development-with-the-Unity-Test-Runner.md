@@ -42,7 +42,7 @@ TDD는 일반적으로 소프트웨어 개발에 사용되지만 게임 개발�
 * 키네마틱 리지드 바디 입니다.
 
 이렇게하면 테스트를 작성하는 데 좋은 출발점이되었습니다. ex)
-```
+```csharp
        [Test]
        public void AtLeastOnePaddleIsSuccesfullyCreated()
        {
@@ -67,7 +67,7 @@ Unity Test Runner는 UnityTest와 같은 기능을 포함합니다. UnityTest는
 
 이 예제에서는 UnitTest를 사용하여 패들의 경계를 벗어날 수 없는지 확인했습니다.
 
-```
+```csharp
   [UnityTest]
     public IEnumerator Paddle1StaysInUpperCameraBounds()
     {

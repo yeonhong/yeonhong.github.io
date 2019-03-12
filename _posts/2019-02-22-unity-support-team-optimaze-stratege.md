@@ -33,7 +33,7 @@ Tier2 opengl es 3.0 이상, 아이폰5s이상
 (그래픽퀄리티는 사람이 다루는것)
 
 ## Custom profiler tags.
-```
+```csharp
 Profiler.beginsample("name");
 Profiler.endsample();
 ```

@@ -21,7 +21,7 @@ link: "https://ornithoptergames.com/reactiverx-in-unity3d-part-1/"
 ## These boots are made for walking
 우리 player가 움직 이도록하십시오. 고전적인 방법은 다음과 같은 스크립트를 사용하는 것입니다.
 
-```
+```csharp
 public class ClassicPlayerController : MonoBehaviour {
   private void Update() {
     // Read keyboard inputs
@@ -37,7 +37,7 @@ public class ClassicPlayerController : MonoBehaviour {
 
 따라서 입력을위한 스크립트 만 작성하여 관심를 분리합시다.
 
-```
+```csharp
 public class Inputs : MonoBehaviour {
 
   public IObservable<Vector2> Movement { get; private set; }
@@ -58,7 +58,7 @@ public class Inputs : MonoBehaviour {
 
 어떻게 사용합니까? 다른 스크립트에서는이 신호를 구독하고 캐릭터에게 움직임을 적용합니다.
 
-```
+```csharp
 public class PlayerController : MonoBehaviour {
   // ... fields omitted ...
 

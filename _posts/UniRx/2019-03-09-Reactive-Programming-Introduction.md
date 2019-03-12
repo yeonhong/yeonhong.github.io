@@ -53,7 +53,7 @@ UI 구성 요소 내부에서 UI 레이블에 대한 참조를 배치하는 방�
 ## Show me some code!
 우리는 앞에서 말한 Player 클래스 예제를 살펴봄으로써 이것을 시작합니다.
 
-```
+```csharp
  using UnityEngine;
  using UnityEngine.UI;
  
@@ -69,7 +69,7 @@ UI 구성 요소 내부에서 UI 레이블에 대한 참조를 배치하는 방�
 ```
 scorelabel과 health는 서로 연관되어 있습니다. 이제 그것을 제거하고 Reactive Extensions 마법으로 대체하십시오.
 
-```
+```csharp
  using UnityEngine;
  using UnityEngine.UI;
  using UniRx;
@@ -91,7 +91,7 @@ scorelabel과 health는 서로 연관되어 있습니다. 이제 그것을 제�
 ## The Reactive superpowers of ReactiveProperty
 UiPresenter 클래스에서 새로운 플레이어를 소개합니다.
 
-```
+```csharp
  using UnityEngine;
  using UnityEngine.UI;
  using UniRx;
@@ -148,7 +148,7 @@ all_balls_in_order = Observable.Merge(h1, h2, h3, h4, h5, h6);
 
 우리의 풀 볼 예제를 다시 한 번 살펴 보겠습니다. 볼을 넣는 구멍에 따라 맨 아래로 굴러 갈 때까지 특정 시간이 걸리는 사실을 시뮬레이션하려고 시도합니다.
 
-```
+```csharp
 all_balls_delayed = Observable.Merge(
   h1.Delay(
     TimeSpan.FromSeconds(1)
@@ -178,7 +178,7 @@ all_balls_delayed = Observable.Merge(
 
 그러나 실제로 이전의 예제로 되돌아갑니다. 우리가 관찰 할 수있는 것들에 대해 정의 할 수있는 가장 기본적인 작업들과 그것을 선언 한 후에 실제로 사용하는 방법에 대해 이야기합시다. 이제 UiPresenter의 다른 버전을 살펴 보겠습니다.
 
-```
+```csharp
  using UnityEngine;
  using UnityEngine.UI;
  using UniRx;
@@ -204,7 +204,7 @@ all_balls_delayed = Observable.Merge(
 
 이제 이 예제를 한 번 더 확장하여 이전에 다루 려던 세 가지 요구 사항을 모두 구현해 보겠습니다. 먼저 애니메이션을 보겠습니다.
 
-```
+```csharp
  using UnityEngine;
  using UnityEngine.UI;
  using UniRx;
@@ -228,7 +228,7 @@ all_balls_delayed = Observable.Merge(
 
 이제 다른 세 번째로 제어되는 플레이어를 지원하는 세 번째 일 :
 
-```
+```csharp
 using UnityEngine;
  using UnityEngine.UI;
  using UniRx;
