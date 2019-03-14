@@ -109,3 +109,32 @@ Sequence terminated
 인터페이스를 구현하는 이 문제는 우리에게 너무 많은 관심을 가져서는 안됩니다. Rx를 사용할 때 실제로 이러한 인터페이스를 구현할 필요가 없으므로 Rx는 필요한 모든 구현을 제공합니다. 간단한 것들을 살펴 봅시다.
 
 ## Subject<T>
+IObserver <T>와 IObservable <T>을 '독자', '작가'또는 '소비자'와 '게시자'인터페이스로 생각합니다. IObservable <T>의 구현을 직접 작성하려면 IObservable 특성을 공개적으로 노출하는 동안 구독자에게 항목을 게시하고 오류를 발생 시키며 시퀀스가 완료 될 때이를 알릴 수 있어야합니다. 왜 그것은 IObserver <T>에 정의 된 메서드와 같습니다. 하나의 유형이 두 인터페이스를 구현하는 것이 이상하게 보일 수 있지만, 이는 쉽습니다. 이것은 Subject가 당신을 위해 할 수있는 것입니다. Subject <T>는 가장 기본적인 주제입니다. 효과적으로 IObservable <T>를 반환하는 메서드 뒤에 Subject <T>를 노출 할 수 있지만 내부적으로 OnNext, OnError 및 OnCompleted 메서드를 사용하여 시퀀스를 제어 할 수 있습니다.
+
+이 아주 기본적인 예제에서는 Subject를 만들고 해당 Subject를 구독 한 다음 subject.OnNext (T)를 호출하여 시퀀스에 값을 게시합니다.
+```csharp
+static void Main(string[] args)
+{
+  var subject = new Subject<string>();
+  WriteSequenceToConsole(subject);
+  subject.OnNext("a");
+  subject.OnNext("b");
+  subject.OnNext("c");
+  Console.ReadKey();
+}
+
+//Takes an IObservable<string> as its parameter. 
+//Subject<string> implements this interface.
+static void WriteSequenceToConsole(IObservable<string> sequence)
+{
+  //The next two lines are equivalent.
+  //sequence.Subscribe(value=>Console.WriteLine(value));
+  sequence.Subscribe(Console.WriteLine);
+}
+```
+
+WriteSequenceToConsole 메서드는 구독 메서드에 대한 액세스 만 원하는대로 IObservable<string>을 사용합니다. 잠깐만, 구독 방법에 인수로 IObserver<string>이 필요하지 않습니까? 확실히 Console.WriteLine은 해당 인터페이스와 일치하지 않습니다. 그렇지만 Rx 팀은 Extension Method를 IObservable<T>에 제공하고 Action<T> 만받습니다. 작업은 항목이 게시 될 때마다 실행됩니다. OnNext, OnCompleted 및 OnError에 대해 호출 할 대리자 조합을 전달할 수있는 Subscribe 확장 메서드에 대한 다른 오버로드가 있습니다. 이것은 IObserver <T>를 구현할 필요가 없다는 것을 의미합니다.
+
+보시다시피 Subject <T>는 Rx 프로그래밍을 시작하는 데 매우 유용 할 수 있습니다. 그러나 Subject <T>는 기본 구현입니다. Subject <T>에는 세 가지 형제가 있습니다. 이는 프로그램 실행 방식을 크게 바꿀 수있는 약간 다른 구현을 제공합니다.
+
+## ReplaySubject<T>
