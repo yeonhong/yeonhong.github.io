@@ -1,0 +1,111 @@
+---
+layout: single
+title: "PART 1 - Getting started : Key Types"
+related: false
+categories: 
+  - 프로그래밍
+tags:
+  - intro to RX
+  - Reactive Programming
+link: "http://introtorx.com/Content/v1.0.10621.0/02_KeyTypes.html#KeyTypes"
+---
+
+Rx로 작업 할 때 이해해야 할 두 가지 주요 유형과 Rx를보다 효과적으로 학습하는 데 도움이되는 보조 유형의 하위 집합이 있습니다. **IObserver <T>** 및 **IObservable <T>**은 Rx의 기본 구성 요소를 형성하지만 **ISubject <TSource, TResult>를 구현하면 Rx를 처음 사용하는 개발자의 학습 곡선이 줄어 듭니다.**
+
+많은 사람들이 LINQ 및 LINQ to Objects, LINQ to SQL 및 LINQ to XML과 같이 많이 사용되는 형식에 익숙합니다. 이러한 공통 구현의 각각은 당신에게 데이터를 질의 할 수있게 해준다. Rx는 동작중인 데이터를 쿼리하는 기능을 제공합니다. **근본적으로 Rx는 Observer 패턴의 토대를 기반으로합니다.** .NET은 이미 멀티 캐스트 대리자 또는 이벤트 (일반적으로 멀티 캐스트 대리자)와 같은 Observer 패턴을 구현하는 몇 가지 다른 방법을 노출합니다. 그러나 다음과 같이 덜 바람직한 기능을 나타내므로 멀티 캐스트 대리자는 이상적이지 않습니다.
+
+* C #에서는 이벤트에 흥미로운 인터페이스가 있습니다. 일부에서는 += 및 -= 연산자 같이 부자연스러운 콜백 등록 방법을 찾았습니다
+* 이벤트는 조합하기 어렵습니다.
+* 이벤트는 시간이 지남에 따라 쉽게 쿼리 할 수있는 기능을 제공하지 않습니다.
+* 이벤트는 우발적인 메모리 누수의 일반적인 원인입니다.
+* 이벤트에는 신호 완료를위한 표준 패턴이 없습니다.
+* 이벤트는 동시성 또는 다중 스레드에 대한 거의 도움이되지 않습니다. (예 : 별도의 스레드에서 이벤트를 발생 시키려면 모든 연관 작업이 필요합니다.)
+
+Rx는 이러한 문제를 해결하기 위해 노력합니다. 여기서는 building block과 Rx를 구성하는 기본 유형을 소개합니다.
+
+## IObservable<T>
+[IObservable <T>](https://docs.microsoft.com/en-us/dotnet/api/system.iobservable-1?redirectedfrom=MSDN&view=netframework-4.7.2) 는 Rx로 작업하기위한 두 개의 새로운 핵심 인터페이스 중 하나입니다. __Subscribe 메소드__ 만 있는 간단한 인터페이스입니다. Microsoft는이 인터페이스가 .NET 버전 4.0에서 BCL에 포함되어 있음을 잘 알고 있습니다. IObservable <T>을 T 객체의 스트리밍 시퀀스로 구현하는 모든 것을 생각할 수 있어야합니다. 그래서 방법이 IObservable <Price>를 반환하면 나는 그것을 가격의 흐름으로 생각할 수 있습니다.
+
+```csharp
+//Defines a provider for push-based notification.
+public interface IObservable<out T>
+{
+  //Notifies the provider that an observer is to receive notifications.
+  IDisposable Subscribe(IObserver<T> observer);
+}
+```
+
+## IObserver<T>
+[IObserver <T>](https://docs.microsoft.com/en-us/dotnet/api/system.iobserver-1?redirectedfrom=MSDN&view=netframework-4.7.2)는 Rx로 작업하기위한 두 개의 핵심 인터페이스 중 하나입니다. 또한 .NET 4.0부터는 BCL에 포함 시켰습니다. Rx 팀이 .NET 3.5 및 Silverlight 사용자를위한 별도의 어셈블리에이 두 인터페이스를 포함 시켰기 때문에 .NET 4.0에 아직 설치되어 있지 않아도 걱정하지 마십시오. IObservable <T>는 "IEnumerable <T>의 기능적 이중성"을 의미합니다. 마지막 성명서가 무엇을 의미하는지 알고 싶다면 [채널 9](https://channel9.msdn.com/tags/Rx/)에서 여러 시간의 비디오를 감상하여 유형의 수학적 순도에 대해 토론하십시오. 다른 모든 사람들은 IEnumerable <T>가 효과적으로 세 가지 (다음 값, 예외 또는 시퀀스의 끝)를 생성 할 수 있음을 의미하므로 IObserver <T>의 세 가지 메서드를 통해 IObservable <T>도 __OnNext(T)__, __OnError(Exception)__ 및 __OnCompleted ()__입니다.
+
+```csharp
+//Provides a mechanism for receiving push-based notifications.
+public interface IObserver<in T>
+{
+  //Provides the observer with new data.
+  void OnNext(T value);
+  //Notifies the observer that the provider has experienced an error condition.
+  void OnError(Exception error);
+  //Notifies the observer that the provider has finished sending push-based notifications.
+  void OnCompleted();
+}
+```
+Rx는 암시 적 계약을 맺어야합니다. IObserver <T>의 구현에는 OnNext (T)에 대한 호출이 한 번 이상 있거나 OnError (Exception) 또는 OnCompleted () 호출이 선택적으로 이어질 수 있습니다. 이 프로토콜은 시퀀스가 종료되면 항상 OnError (Exception) 또는 OnCompleted ()에 의해 종료됩니다. 그러나이 프로토콜은 OnNext (T), OnError (Exception) 또는 OnCompleted ()를 호출 할 것을 요구하지 않습니다. 이것은 빈 및 무한 시퀀스의 개념을 가능하게합니다. 나중에 더 자세히 살펴 보겠습니다.
+
+흥미롭게도, Rx로 작업하는 경우 IObservable <T> 인터페이스에 자주 노출되지만 일반적으로 IObserver <T>에 관심을 가질 필요는 없습니다. 이는 Rx가 Subscribe와 같은 메소드를 통해 익명 구현을 제공하기 때문입니다.
+
+### Implementing IObserver<T> and IObservable<T>
+각 인터페이스를 구현하는 것은 꽤 쉽습니다. 콘솔에 값을 출력하는 옵저버를 만들고 싶다면이 방법만큼이나 쉬울 것입니다.
+```csharp
+public class MyConsoleObserver<T> : IObserver<T>
+{
+  public void OnNext(T value)
+  {
+   Console.WriteLine("Received value {0}", value);
+  }
+  public void OnError(Exception error)
+  {
+   Console.WriteLine("Sequence faulted with {0}", error);
+  }
+  public void OnCompleted()
+  {
+   Console.WriteLine("Sequence terminated");
+  }
+}
+```
+
+관찰 가능한 시퀀스를 구현하는 것은 약간 어렵습니다. 일련의 숫자를 반환하는 지나치게 단순화 된 구현은 다음과 같이 보일 수 있습니다.
+```csharp
+public class MySequenceOfNumbers : IObservable<int>
+{
+  public IDisposable Subscribe(IObserver<int> observer)
+  {
+    observer.OnNext(1);
+    observer.OnNext(2);
+    observer.OnNext(3);
+    observer.OnCompleted();
+    return Disposable.Empty;
+  }
+}
+```
+
+이 두 가지 구현을 함께 묶어 다음 출력을 얻을 수 있습니다.
+```csharp
+var numbers = new MySequenceOfNumbers();
+var observer = new MyConsoleObserver<int>();
+numbers.Subscribe(observer);
+```
+
+output
+```
+Received value 1
+Received value 2
+Received value 3
+Sequence terminated
+```
+
+여기에있는 문제는 이것이 전혀 react가 없다는 것입니다. 이 구현은 블로킹이므로 List <T> 또는 배열과 같은 IEnumerable <T> 구현을 사용할 수도 있습니다.
+
+인터페이스를 구현하는 이 문제는 우리에게 너무 많은 관심을 가져서는 안됩니다. Rx를 사용할 때 실제로 이러한 인터페이스를 구현할 필요가 없으므로 Rx는 필요한 모든 구현을 제공합니다. 간단한 것들을 살펴 봅시다.
+
+## Subject<T>
