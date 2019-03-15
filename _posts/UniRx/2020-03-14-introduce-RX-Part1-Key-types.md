@@ -138,3 +138,72 @@ WriteSequenceToConsole 메서드는 구독 메서드에 대한 액세스 만 원
 보시다시피 Subject <T>는 Rx 프로그래밍을 시작하는 데 매우 유용 할 수 있습니다. 그러나 Subject <T>는 기본 구현입니다. Subject <T>에는 세 가지 형제가 있습니다. 이는 프로그램 실행 방식을 크게 바꿀 수있는 약간 다른 구현을 제공합니다.
 
 ## ReplaySubject<T>
+ReplaySubject<T>는 캐시 값의 기능을 제공하고 지연 구독에 대해 재생합니다. 첫 번째 발행물이 구독 전에 발생하도록 이동한 예제 입니다.
+``` csharp
+static void Main(string[] args)
+{
+  var subject = new Subject<string>();
+  subject.OnNext("a");
+  WriteSequenceToConsole(subject);
+  subject.OnNext("b");
+  subject.OnNext("c");
+  Console.ReadKey();
+}
+```
+
+이 결과는 'b'와 'c'가 콘솔에 기록되지만 'a'는 무시된다는 것입니다. subject를 ReplaySubject <T>로 변경하기 위해 사소한 변경을 수행하면 모든 발행물이 다시 표시됩니다.
+``` csharp
+var subject = new ReplaySubject<string>();
+subject.OnNext("a");
+WriteSequenceToConsole(subject);
+subject.OnNext("b");
+subject.OnNext("c");
+```
+
+이는 경쟁 조건을 제거하기 위해 매우 편리 할 수 있습니다. **ReplaySubject <T>의 기본 생성자는 게시 된 모든 값을 캐시하는 인스턴스를 만듭니다.** 많은 시나리오에서 이것은 응용 프로그램에 불필요한 메모리 부담을 줄 수 있습니다. ReplaySubject <T>를 사용하면이 메모리 문제를 완화 할 수있는 간단한 캐시 만료 설정을 지정할 수 있습니다. 한 가지 옵션은 캐시에서 버퍼의 크기를 지정할 수 있다는 것입니다. 이 예제에서는 버퍼 크기가 2 인 ReplaySubject <T>를 만들고 구독 전에 게시 된 마지막 두 값만 가져옵니다.
+``` csharp
+public void ReplaySubjectBufferExample()
+{
+  var bufferSize = 2;
+  var subject = new ReplaySubject<string>(bufferSize);
+  subject.OnNext("a");
+  subject.OnNext("b");
+  subject.OnNext("c");
+  subject.Subscribe(Console.WriteLine);
+  subject.OnNext("d");
+}
+```
+
+여기서 출력은 값 'a'가 캐시에서 삭제되었지만 값 'b'와 'c'가 여전히 유효 함을 나타냅니다. 값 'd'는 우리가 가입 한 후에 발행되었으므로 콘솔에도 기록됩니다.
+```
+Output:
+b
+c
+d
+```
+
+ReplaySubject <T>에 의한 값의 끝없는 캐싱을 막기위한 또 다른 옵션은 캐시 window를 제공하는 것입니다. 이 예에서는 버퍼 크기로 ReplaySubject <T>를 만드는 대신 캐시 된 값이 유효한 time window를 지정합니다.
+``` csharp
+public void ReplaySubjectWindowExample()
+{
+  var window = TimeSpan.FromMilliseconds(150);
+  var subject = new ReplaySubject<string>(window);
+  subject.OnNext("w");
+  Thread.Sleep(TimeSpan.FromMilliseconds(100));
+  subject.OnNext("x");
+  Thread.Sleep(TimeSpan.FromMilliseconds(100));
+  subject.OnNext("y");
+  subject.Subscribe(Console.WriteLine);
+  subject.OnNext("z");
+}
+```
+
+위의 예제에서 창은 150 밀리 초로 지정되었습니다. 값은 100 밀리 초 간격으로 게시됩니다. 일단 우리가 주제에 가입하면, 첫 번째 값은 200ms 이전이므로 만료되어 캐시에서 제거됩니다.
+```
+Output:
+x
+y
+z
+```
+
+
