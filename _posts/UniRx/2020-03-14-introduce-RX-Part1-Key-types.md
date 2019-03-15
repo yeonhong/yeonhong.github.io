@@ -206,4 +206,52 @@ y
 z
 ```
 
+## BehaviorSubject<T>
+BehaviorSubject <T>는 ReplaySubject <T>와 유사하지만 마지막 게시만 기억합니다. BehaviorSubject <T> 또한 기본값인 T를 제공해야합니다. 즉, 이미 완료되지 않은 경우 모든 구독자가 즉시 값을받습니다.
 
+이 예제에서 값 'a'는 콘솔에 기록됩니다.
+``` csharp
+public void BehaviorSubjectExample()
+{
+  //Need to provide a default value.
+  var subject = new BehaviorSubject<string>("a");
+  subject.Subscribe(Console.WriteLine);
+}
+```
+
+이 예제에서 값 'b'는 콘솔에 기록되지만 'a'는 기록되지 않습니다.
+``` csharp
+public void BehaviorSubjectExample2()
+{
+  var subject = new BehaviorSubject<string>("a");
+  subject.OnNext("b");
+  subject.Subscribe(Console.WriteLine);
+}
+```
+
+이 예제에서 'b', 'c'및 'd'값은 모두 콘솔에 기록되지만 'a'는 기록되지 않습니다.
+``` csharp
+public void BehaviorSubjectExample3()
+{
+  var subject = new BehaviorSubject<string>("a");
+  subject.OnNext("b");
+  subject.Subscribe(Console.WriteLine);
+  subject.OnNext("c");
+  subject.OnNext("d");
+}
+```
+
+마지막으로이 예제에서는 시퀀스가 완료 될 때 값이 게시되지 않습니다. 콘솔에 아무 것도 기록되지 않습니다.
+``` csharp
+public void BehaviorSubjectCompletedExample()
+{
+  var subject = new BehaviorSubject<string>("a");
+  subject.OnNext("b");
+  subject.OnNext("c");
+  subject.OnCompleted();
+  subject.Subscribe(Console.WriteLine);
+}
+```
+버퍼 크기가 1인 ReplaySubject <T> (일반적으로 'replay one subject'이라고 함)와 BehaviorSubject <T> 사이에는 차이가 있음을 참고하십시오. BehaviorSubject <T>에는 초기 값이 필요합니다. 두 주제 중 어느 것도 완료되지 않았다는 가정하에 BehaviorSubject <T>에 값이 있음을 확신 할 수 있습니다. 그러나 ReplaySubject <T>로는 확신 할 수 없습니다. 이를 염두에두고 BehaviorSubject <T>를 완성하는 것은 이례적인 일입니다. 또 다른 차이점은 재생 한 피사체가 완료되면 다시 피할 수 있다는 것입니다. 그래서 완성 된 BehaviorSubject <T>에 가입하면 값을받지 못하게 될 수 있지만 ReplaySubject <T>를 사용하면 가능합니다.
+
+BehaviorSubject <T>는 종종 클래스 속성과 연결됩니다. 사용자는 항상 값을 가지며 변경 알림을 제공 할 수 있기 때문에 필드를 속성으로 보완 할 수 있습니다.
