@@ -286,4 +286,54 @@ static void Main(string[] args)
 }
 ```
 
+## Implicit contracts (암시적 계약)
+위에서 언급 한 것처럼 Rx로 작업 할 때 암시 적으로 필요한 연락처가 있습니다. 가장 중요한 점은 시퀀스가 완료되면 해당 시퀀스에서 더 이상의 활동이 발생하지 않는다는 것입니다. 시퀀스는 OnCompleted() 또는 OnError(Exception)의 두 가지 방법 중 하나로 완료 할 수 있습니다.
 
+이 장에서 설명한 네 가지 주제는 모두 시퀀스가 이미 종료 된 후에 값, 오류 또는 완료를 게시하려는 시도를 무시함으로써이 암시적 계약을 처리합니다.
+
+여기에 완성 된 시퀀스에 값 'c'를 게시하려는 시도가 있습니다. 하지만 'a'와 'b'값만 콘솔에 기록됩니다.
+``` csharp
+public void SubjectInvalidUsageExample()
+{
+  var subject = new Subject<string>();
+  subject.Subscribe(Console.WriteLine);
+  subject.OnNext("a");
+  subject.OnNext("b");
+  subject.OnCompleted();
+  subject.OnNext("c");
+}
+```
+
+## ISubject interfaces
+이 장에서 설명하는 네 개의 주제는 각각 IObservable <T> 및 IObserver <T> 인터페이스를 구현하지만 다른 인터페이스 세트를 통해 수행합니다.
+``` csharp
+//Represents an object that is both an observable sequence as well as an observer.
+public interface ISubject<in TSource, out TResult> : IObserver<TSource>, IObservable<TResult>
+{
+}
+```
+
+여기에 언급 된 모든 subject가 TSource와 TResult 모두에 대해 동일한 유형이므로, 이전 인터페이스의 상위 집합 인이 인터페이스를 구현합니다.
+``` csharp
+//Represents an object that is both an observable sequence as well as an observer.
+public interface ISubject<T> : ISubject<T, T>, IObserver<T>, IObservable<T>
+{
+}
+```
+
+이러한 인터페이스는 널리 사용되지 않지만 공통된 기본 클래스를 공유하지 않는 피험자에게 유용합니다. 나중에 우리가 [Hot and Cold observables]을 발견 할 때 사용되는 Subject 인터페이스를 보게 될 것입니다.
+
+## Subject factory
+마지막으로 팩토리 메서드를 통해 주제를 만들 수도 있음을 알리는 것이 중요합니다. Subject가 IObservable <T> 및 IObserver <T> 인터페이스를 결합한다는 것을 고려하면, 사용자가 직접 결합 할 수있는 factory가 있어야한다는 것이 합리적입니다. Subject.Create (IObserver <TSource>, IObservable <TResult>) 팩토리 메서드는 이것을 단지 제공합니다.
+``` csharp
+// 제목에 메시지를 게시하는 데 사용 된 지정된 관찰자로부터 subject를 만듭니다.
+// 그리고 관찰 할 수 있는 제목에서 보낸 메시지를 구독하는 데 사용
+public static ISubject<TSource, TResult> Create<TSource, TResult>(
+IObserver<TSource> observer, 
+IObservable<TResult> observable)
+{...}
+```
+
+subject는 Rx를 돌릴 수있는 편리한 방법을 제공하지만 일상적인 사용에는 권장하지 않습니다. 설명은 부록의 사용 지침에 나와 있습니다. subject를 사용하는 대신 파트 2에서 살펴볼 팩토리 메소드를 사용하십시오.
+
+IObserver <T>와 IObservable <T>의 기본 유형과 보조 주제 유형은 Rx 지식을 구축 할 기반을 만듭니다. 이러한 단순 유형과 암시 적 계약을 이해하는 것이 중요합니다. 프로덕션 코드에서는 IObserver <T> 인터페이스와 subject 타입을 거의 사용하지 않을 수도 있지만, 이를 이해하고 Rx 에코 시스템에 어떻게 적용되는지는 여전히 중요합니다. IObservable <T> 인터페이스는 움직이는 데이터의 순서를 나타낼 수있는 지배적인 유형이므로 Rx 및 대부분의 작업에 대한 핵심 관심사를 구성합니다.
