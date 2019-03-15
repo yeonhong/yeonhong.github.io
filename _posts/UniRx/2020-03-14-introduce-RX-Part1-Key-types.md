@@ -138,7 +138,7 @@ WriteSequenceToConsole 메서드는 구독 메서드에 대한 액세스 만 원
 보시다시피 Subject <T>는 Rx 프로그래밍을 시작하는 데 매우 유용 할 수 있습니다. 그러나 Subject <T>는 기본 구현입니다. Subject <T>에는 세 가지 형제가 있습니다. 이는 프로그램 실행 방식을 크게 바꿀 수있는 약간 다른 구현을 제공합니다.
 
 ## ReplaySubject<T>
-ReplaySubject<T>는 캐시 값의 기능을 제공하고 지연 구독에 대해 재생합니다. 첫 번째 발행물이 구독 전에 발생하도록 이동한 예제 입니다.
+ReplaySubject<T>는 **캐시 값의 기능을 제공하고** 지연 구독에 대해 재생합니다. 첫 번째 발행물이 구독 전에 발생하도록 이동한 예제 입니다.
 ``` csharp
 static void Main(string[] args)
 {
@@ -207,7 +207,7 @@ z
 ```
 
 ## BehaviorSubject<T>
-BehaviorSubject <T>는 ReplaySubject <T>와 유사하지만 마지막 게시만 기억합니다. BehaviorSubject <T> 또한 기본값인 T를 제공해야합니다. 즉, 이미 완료되지 않은 경우 모든 구독자가 즉시 값을받습니다.
+BehaviorSubject <T>는 ReplaySubject <T>와 유사하지만 **마지막 게시만 기억합니다. BehaviorSubject <T> 또한 기본값인 T를 제공해야합니다. 즉, 이미 완료되지 않은 경우 모든 구독자가 즉시 값을받습니다.**
 
 이 예제에서 값 'a'는 콘솔에 기록됩니다.
 ``` csharp
@@ -255,3 +255,35 @@ public void BehaviorSubjectCompletedExample()
 버퍼 크기가 1인 ReplaySubject <T> (일반적으로 'replay one subject'이라고 함)와 BehaviorSubject <T> 사이에는 차이가 있음을 참고하십시오. BehaviorSubject <T>에는 초기 값이 필요합니다. 두 주제 중 어느 것도 완료되지 않았다는 가정하에 BehaviorSubject <T>에 값이 있음을 확신 할 수 있습니다. 그러나 ReplaySubject <T>로는 확신 할 수 없습니다. 이를 염두에두고 BehaviorSubject <T>를 완성하는 것은 이례적인 일입니다. 또 다른 차이점은 재생 한 피사체가 완료되면 다시 피할 수 있다는 것입니다. 그래서 완성 된 BehaviorSubject <T>에 가입하면 값을받지 못하게 될 수 있지만 ReplaySubject <T>를 사용하면 가능합니다.
 
 BehaviorSubject <T>는 종종 클래스 속성과 연결됩니다. 사용자는 항상 값을 가지며 변경 알림을 제공 할 수 있기 때문에 필드를 속성으로 보완 할 수 있습니다.
+
+## AsyncSubject<T>
+AsyncSubject <T>는 값을 캐시하는 방식에서 Replay 및 Behavior 제목과 유사하지만 **마지막 값만 저장하고 시퀀스가 완료 될 때만 게시합니다.** AsyncSubject <T>의 일반적인 사용법은 하나의 값을 게시 한 다음 즉시 완료하는 것입니다. 이것은 이것이 Task <T>와 꽤 유사하다는 것을 의미합니다.
+
+이 예제에서는 시퀀스가 완료되지 않으므로 값이 게시되지 않습니다. 콘솔에 값이 기록되지 않습니다.
+``` csharp
+static void Main(string[] args)
+{
+  var subject = new AsyncSubject<string>();
+  subject.OnNext("a");
+  WriteSequenceToConsole(subject);
+  subject.OnNext("b");
+  subject.OnNext("c");
+  Console.ReadKey();
+}
+```
+
+이 예제에서는 OnCompleted 메서드를 호출하여 마지막 값 'c'가 콘솔에 기록됩니다.
+``` csharp
+static void Main(string[] args)
+{
+  var subject = new AsyncSubject<string>();
+  subject.OnNext("a");
+  WriteSequenceToConsole(subject);
+  subject.OnNext("b");
+  subject.OnNext("c");
+  subject.OnCompleted();
+  Console.ReadKey();
+}
+```
+
+
