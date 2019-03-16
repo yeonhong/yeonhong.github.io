@@ -115,7 +115,7 @@ private IObservable<string> NonBlocking()
 ```
 예제가 다소 의도되었지만 소비자가 blocking eagerly evaluated call하면 실제 구독 여부와 관계없이 IObservable <string>을 받기까지 최소 1초 동안 차단됩니다. 비 차단 방법은 느슨하게 평가되므로 소비자는 IObservable <string>을 즉시받으며 구독하는 경우 스레드 수면 비용 만 발생합니다.
 
-연습으로 Create 메서드를 사용하여 Empty, Return, Never & Throw 확장 메서드를 직접 만들어보십시오. 지금 Visual Studio 또는 LINQPad를 사용할 수있는 경우 가능한 빨리 코드를 작성하십시오. 만약 당신이 (아마도 당신이 일하는 길에 열차에있다)이 문제를 해결할 방법을 개념화하려고하지 마십시오. 당신이 끝나면 그것이 어떻게 될 수 있는지에 대한 몇 가지 예를 보게됩니다.
+연습으로 Create 메서드를 사용하여 Empty, Return, Never & Throw 확장 메서드를 직접 만들어보십시오. 지금 Visual Studio 또는 LINQPad를 사용할 수있는 경우 가능한 빨리 코드를 작성해보세요.
 ---
 
 Observable.Create를 사용하여 Empty, Return, Never 및 Throw를 다시 작성한 예 :
