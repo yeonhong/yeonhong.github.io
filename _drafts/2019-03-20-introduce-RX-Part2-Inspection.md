@@ -18,3 +18,138 @@ link: "http://introtorx.com/Content/v1.0.10621.0/06_Inspection.html#Inspection"
 다음에 살펴볼 일련의 메소드는 주어진 시퀀스를 검사하는 데 유용합니다. 각각은 결과를 포함하는 단일 값으로 관찰 가능한 시퀀스를 반환합니다. 이것은 본성 상 비동기 적이기 때문에 유용합니다. 그들은 모두 매우 간단하므로 우리는 그들 각각에 대해 간략하게 설명 할 것입니다.
 
 ## Any
+먼저 확장 메서드 Any에 대한 매개 변수없는 오버로드를 살펴볼 수 있습니다. 소스가 값없이 완료되면 단일 값 false를 갖는 관찰 가능 시퀀스를 리턴합니다. 그러나 소스가 값을 생성하는 경우 첫 번째 값이 생성되면 결과 시퀀스가 즉시 true로 설정되고 완료됩니다. 첫 번째 알림이 도착할때 오류가 발생하면 해당 오류가 전달됩니다.
+``` csharp
+var subject = new Subject<int>();
+subject.Subscribe(Console.WriteLine, () => Console.WriteLine("Subject completed"));
+var any = subject.Any();
+any.Subscribe(b => Console.WriteLine("The subject has any values? {0}", b));
+subject.OnNext(1);
+subject.OnCompleted();
+/*
+Output:
+1
+The subject has any values? True
+subject completed
+*/
+```
+OnNext (1)을 제거하면 출력이 다음과 같이 변경됩니다.
+``` csharp
+// subject completed
+// The subject has any values? False
+```
+소스 에러의 경우, 최초의 통지의 경우 만 흥미가있다. 그렇지 않은 경우, Any 메소드는 벌써 true로 설정되어있다. 첫 번째 알림이 오류 인 경우 Any는 OnError 알림으로 전달합니다.
+``` csharp
+var subject = new Subject<int>();
+subject.Subscribe(Console.WriteLine,
+  ex => Console.WriteLine("subject OnError : {0}", ex),
+  () => Console.WriteLine("Subject completed"));
+var any = subject.Any();
+any.Subscribe(b => Console.WriteLine("The subject has any values? {0}", b),
+  ex => Console.WriteLine(".Any() OnError : {0}", ex),
+  () => Console.WriteLine(".Any() completed"));
+subject.OnError(new Exception());
+/*
+Output:
+subject OnError : System.Exception: Fail
+.Any() OnError : System.Exception: Fail
+*/
+```
+또한 Any 메서드에는 조건자를 사용하는 오버로드가 있습니다. 이것은 효과적으로 그것을 Any가 붙은 Where로 만듭니다.
+``` csharp
+subject.Any(i => i > 2);
+//Functionally equivalent to 
+subject.Where(i => i > 2).Any();
+```
+
+Any를 Observable.Create로 만들었을때 아래와 같이 할 수 있습니다. (조건자들은 사실 만들수 있다는걸 보여주는듯.)
+``` csharp
+public static IObservable<bool> MyAny<T>(
+  this IObservable<T> source)
+{
+  return Observable.Create<bool>(
+  o =>
+  {
+    var hasValues = false;
+    return source
+      .Take(1)
+      .Subscribe(
+        _ => hasValues = true,
+        o.OnError,
+        () =>
+        {
+          o.OnNext(hasValues);
+          o.OnCompleted();
+        });
+  });
+}
+public static IObservable<bool> MyAny<T>(
+  this IObservable<T> source, 
+  Func<T, bool> predicate)
+{
+  return source
+    .Where(predicate)
+    .MyAny();
+}
+```
+
+## All
+All () 확장 메서드는 모든 값이 술어를 충족시켜야한다는 점을 제외하고는 Any 메서드와 마찬가지로 작동합니다. 값이 술어를 충족시키지 않으면 false 값이 리턴되고 출력 시퀀스가 완료됩니다. 소스가 비어 있으면 All이 해당 값으로 true를 푸시합니다. Any 메서드 처럼, 오류가 All 메서드의 구독자에게 전달됩니다.
+``` csharp
+var subject = new Subject<int>();
+subject.Subscribe(Console.WriteLine, () => Console.WriteLine("Subject completed"));
+var all = subject.All(i => i < 5);
+all.Subscribe(b => Console.WriteLine("All values less than 5? {0}", b));
+subject.OnNext(1);
+subject.OnNext(2);
+subject.OnNext(6);
+subject.OnNext(2);
+subject.OnNext(1);
+subject.OnCompleted();
+/*
+Output:
+1
+2
+6
+All values less than 5? False
+all completed
+2
+1
+subject completed
+*/
+```
+Rx의 얼리 어답터는 IsEmpty 확장 방법이 없음을 알 수 있습니다. All 확장 메서드를 사용하여 누락 된 메서드를 쉽게 복제 할 수 있습니다
+``` csharp
+//IsEmpty() is deprecated now.
+//var isEmpty = subject.IsEmpty();
+var isEmpty = subject.All(_ => false);
+```
+
+## Contains
+Contains 확장 메소드 오버로드는 모든 확장 메소드에 오버로드가 될 수 있습니다. Contains 확장 메서드는 Any와 동일한 동작을하지만, 특히 조건 자 사용 대신 IComparable 사용을 대상으로하며 조건 자에 맞는 값 대신 특정 값을 찾도록 설계되었습니다. 나는 이것이 IEnumerable과의 일관성을 위해 Any의 오버로드가 아니라고 생각한다.
+``` csharp
+var subject = new Subject<int>();
+subject.Subscribe(
+  Console.WriteLine, 
+  () => Console.WriteLine("Subject completed"));
+var contains = subject.Contains(2);
+contains.Subscribe(
+  b => Console.WriteLine("Contains the value 2? {0}", b),
+  () => Console.WriteLine("contains completed"));
+subject.OnNext(1);
+subject.OnNext(2);
+subject.OnNext(3);
+subject.OnCompleted();
+/*
+Output:
+1
+2
+Contains the value 2? True
+contains completed (조건에 맞는게 보이는 즉시 완료)
+3
+Subject completed
+*/
+```
+또한 형식에 대한 기본값 이외의 IEqualityComparer <T> 구현을 지정할 수 있도록 Contains에 대한 오버로드가 있습니다. This can be useful if you have a sequence of custom types that may have some special rules for equality depending on the use case.
+
+## DefaultIfEmpty
