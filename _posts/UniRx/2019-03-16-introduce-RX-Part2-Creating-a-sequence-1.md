@@ -2,7 +2,6 @@
 layout: single
 title: "PART 2 - Sequence basics : Creating a sequence - 1. Simple factory methods"
 related: true
-permalink: /docs/intro to RX/
 categories: 
   - 프로그래밍
 tags:
