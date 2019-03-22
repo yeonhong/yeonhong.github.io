@@ -1,7 +1,8 @@
 ---
 layout: single
 title: "PART 2 - Sequence basics : Transformation of sequences"
-related: true
+related: false
+permalink: /docs/intro to RX/
 categories: 
   - 프로그래밍
 tags:

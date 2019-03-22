@@ -2,6 +2,7 @@
 layout: single
 title: "PART 1 - Getting started : Why Rx?"
 related: true
+permalink: /docs/intro to RX/
 categories: 
   - 프로그래밍
 tags:
