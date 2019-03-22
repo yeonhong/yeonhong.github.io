@@ -1,6 +1,6 @@
 ---
-title: "Posts by Year"
-permalink: /year-archive/
+title: "Test Menu"
+permalink: /Test-Menu/
 layout: posts
-author_profile: true
+author_profile: false
 ---
