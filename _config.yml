@@ -279,21 +279,6 @@ compress_html:
   ignore:
     envs: development
 
-# Collections
-collections:
-  docs:
-    output: false
-    permalink: /:collection/:path/
-  recipes:
-    output: false
-    permalink: /:collection/:path/
-  pets:
-    output: false
-    permalink: /:collection/:path/
-  portfolio:
-    output: false
-    permalink: /:collection/:path/
-
 # Defaults
 defaults:
   # _posts
