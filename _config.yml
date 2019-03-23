@@ -299,3 +299,9 @@ defaults:
     values:
       layout: single
       author_profile: true
+  # collection
+  - scope:
+      path: ""
+      type: collection
+    values:
+      layout: single
