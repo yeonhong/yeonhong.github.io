@@ -2,14 +2,10 @@ main:
   - title: "intro to RX"
     url: /docs/intro to RX/
     description: "intro to RX 번역"
-  - title: "Posts"
-    url: /year-archive/
   - title: "Categories"
     url: /categories/
   - title: "Tags"
     url: /tags/
-  - title: "Pages"
-    url: /page-archive/
   - title: "Collections"
     url: /collection-archive/
   - title: "External Link"
