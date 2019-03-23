@@ -5,6 +5,7 @@ layout: tag
 taxonomy: intro to RX
 entries_layout: grid
 sidebar:
-  nav: "docs"
+  nav: "IntroRX"
+author_profile: false
 ---
 

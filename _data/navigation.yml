@@ -11,7 +11,7 @@ main:
   - title: "External Link"
     url: https://google.com
 
-docs:
+IntroRX:
   - title: Getting Started
     children:
       - title: "Quick-Start Guide"
