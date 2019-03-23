@@ -1,8 +1,9 @@
 ---
-## layout: single
+layout: single
 title: "Unity Best Practices 정리"
 categories: 
   - 프로그래밍
+toc: true
 tags:
   - Unity
   - Optimaze
