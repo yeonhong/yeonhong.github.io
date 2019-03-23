@@ -2,6 +2,7 @@
 layout: single
 title: "PART 2 - Sequence basics : Creating a sequence - 2. Functional unfolds"
 related: true
+classes: wide
 categories: 
   - 프로그래밍
 tags:

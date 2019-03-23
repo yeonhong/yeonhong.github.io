@@ -2,6 +2,7 @@
 layout: single
 title: "PART 1 - Getting started : Key Types"
 related: true
+classes: wide
 categories: 
   - 프로그래밍
 tags:
