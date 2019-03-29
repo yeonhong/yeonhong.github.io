@@ -1,9 +1,8 @@
 ---
 layout: single
 title: "PART 2 - Sequence basics : Transformation of sequences"
-related: false
+related: true
 classes: wide
-permalink: /docs/intro to RX/
 categories: 
   - 프로그래밍
 tags:
@@ -368,3 +367,187 @@ public static IObservable<TResult> MySelect<TSource, TResult>(
 ```
 
 ### IEnumerable<T> vs. IObservable<T> SelectMany
+IEnumerable <T> SelectMany와 IObservable <T> SelectMany의 구현 사이의 차이점은 주목할 가치가있다. IEnumerable <T> 시퀀스는 끌어 오기 기반이며 차단하는 것으로 간주하십시오. IEnumerable <T>가 SelectMany로 처리 될 때 한 번에 하나의 항목을 선택기 함수로 전달하고 소스에서 다음 값을 요청하기 전에 선택기에서 모든 값을 처리 할 때까지 기다릴 것을 의미합니다 .
+
+[1,2,3]의 IEnumerable <T> 소스 시퀀스를 고려하십시오. [x * 10, (x * 10) +1, (x * 10) +2]의 시퀀스를 반환하는 SelectMany 연산자로 처리하면 [[10,11,12], [20,21,22], [30,31,32]].
+``` csharp
+private IEnumerable<int> GetSubValues(int offset)
+{
+  yield return offset * 10;
+  yield return (offset * 10) + 1;
+  yield return (offset * 10) + 2;
+}
+```
+그런 다음 GetSubValues 메서드를 다음 코드와 함께 적용합니다.
+``` csharp
+var enumerableSource = new [] {1, 2, 3};
+var enumerableResult = enumerableSource.SelectMany(GetSubValues);
+foreach (var value in enumerableResult)
+{
+  Console.WriteLine(value);
+}
+
+10
+11
+12
+20
+21
+22
+30
+31
+32
+```
+IObservable <T> 시퀀스와의 차이점은 SelectMany의 선택기 함수에 대한 호출이 차단되지 않으며 결과 시퀀스가 시간이 지남에 따라 값을 생성 할 수 있다는 것입니다. 즉, 후속 '하위'시퀀스가 겹칠 수 있습니다.
+ [1,2,3] 시퀀스를 다시 고려해 보겠습니다. 값이 3 초 간격으로 생성된다고할때, 선택기 기능은 위의 예제에 따라 [x * 10, (x * 10) +1, (x * 10) +2] 시퀀스를 생성하지만이 값은 4 초 간격으로 지정됩니다.
+
+이러한 종류의 비동기 데이터를 시각화하려면 공간과 시간을 표현해야합니다.
+
+### Visualizing sequences
+신속하게 전환하고 시퀀스와 관련된 개념을 전달하는 데 도움이되는 기술에 대해 이야기합시다. marble 다이어그램은 시퀀스를 시각화하는 방법입니다. marble 다이어그램은 Rx 개념을 공유하고 시퀀스 구성을 설명하는 데 적합합니다. marble 다이어그램을 사용할 때 알아야 할 사항이 몇 가지 있습니다.
+1. 시퀀스는 수평선으로 표시됩니다.
+2. 시간이 오른쪽으로 이동합니다 (즉, 왼쪽의 물건이 오른쪽의 물건보다 먼저 일어났습니다)
+3. 알림은 기호로 표시됩니다.
+  * OnNext의 경우 '0'
+  * OnError의 경우 'X'
+  * OnCompleted의 경우 '|'
+4. 시퀀스의 행을 생성하여 많은 동시 시퀀스를 시각화 할 수 있습니다.
+
+완료되는 세 가지 값의 시퀀스 샘플입니다.
+```
+--0--0--0-|
+```
+4개의 값과 마지막 에러의 표현
+```
+--0--0--0--0--X
+```
+이제 SelectMany 예제로 돌아가서 0 마커 대신 값을 사용하여 입력 시퀀스를 시각화 할 수 있습니다. 이것은 3 초 간격으로 배열 된 시퀀스 [1,2,3]의 marble 다이어그램 표현입니다 (각 문자는 1 초를 나타냅니다).
+```
+--1--2--3|
+```
+이제 시간과 공간의 개념을 도입하여 대리석 다이어그램의 힘을 활용할 수 있습니다. 여기 우리는 시퀀스 [10,11,12]를주는 첫 번째 값 1에 의해 생성 된 시퀀스의 시각화를 봅니다. 이 값들은 4 초 간격으로 나뉘었지만 초기 값은 즉시 생성됩니다.
+```
+1---1---1|
+0   1   2|
+```
+값은 두 자리수이므로 두 값은 10이라는 값과 혼동하지 않고 값 0이 바로 뒤에옵니다. 우리는 selector 함수에 의해 생성 된 각 시퀀스에 하나의 행을 추가합니다.
+```
+--1--2--3|
+  1---1---1|
+  0   1   2|
+     2---2---2|
+     0   1   2|
+        3---3---3|
+        0   1   2|
+```
+이제 소스 시퀀스와 그 자식 시퀀스를 시각화 할 수 있으므로 SelectMany 연산자의 예상 출력을 추론 할 수 있어야합니다. 대리석 다이어그램의 결과 행을 만들려면 각 하위 시퀀스의 값을 새 결과 행으로 '넘기면' 됩니다.
+```
+--1--2--3|
+  1---1---1|
+  0   1   2|
+     2---2---2|
+     0   1   2|
+        3---3---3|
+        0   1   2|
+--1--21-321-32--3|
+  0  01 012 12  2|
+```
+이 연습을 코드에 적용하면 marble 다이어그램을 검증 할 수 있습니다. 먼저 자식 시퀀스를 생성하는 우리의 방법 :
+``` csharp
+private IObservable<long> GetSubValues(long offset)
+{
+  //Produce values [x*10, (x*10)+1, (x*10)+2] 4 seconds apart, but starting immediately.
+  return Observable.Timer(TimeSpan.Zero, TimeSpan.FromSeconds(4))
+    .Select(x => (offset*10) + x)
+    .Take(3);
+}
+```
+다음은 소스 시퀀스를 사용하여 최종 출력을 생성하는 코드입니다.
+``` csharp
+// Values [1,2,3] 3 seconds apart.
+Observable.Interval(TimeSpan.FromSeconds(3))
+  .Select(i => i + 1) //Values start at 0, so add 1.
+  .Take(3)            //We only want 3 values
+  .SelectMany(GetSubValues) //project into child sequences
+  .Dump("SelectMany");
+
+생성 된 출력은 marble 다이어그램의 예상과 일치합니다.
+
+SelectMany-->10
+SelectMany-->20
+SelectMany-->11
+SelectMany-->30
+SelectMany-->21
+SelectMany-->12
+SelectMany-->31
+SelectMany-->22
+SelectMany-->32
+SelectMany completed
+```
+이전에 Select Compilation Syntax에서 사용되는 Select 연산자를 살펴 보았으므로 SelectMany 연산자를 사용하는 방법에 유의해야합니다. Select 확장 방법은 쿼리 독해 구문에 매우 명확하게 매핑됩니다. SelectMany는 그렇게 명확하지 않습니다. 이전 예제에서 보았 듯이 Select를 사용하는 간단한 구현은 다음과 같습니다.
+``` csharp
+var query = from i in Observable.Range(1, 5)
+  select i;
+```
+간단한 where 절을 추가하려면 다음과 같이 할 수 있습니다.
+``` csharp
+var query = from i in Observable.Range(1, 5)
+  where i%2==0
+  select i;
+```
+SelectMany를 쿼리에 추가하기 위해 실제로는 from 절을 추가합니다.
+``` csharp
+var query = from i in Observable.Range(1, 5)
+  where i%2==0
+  from j in GetSubValues(i)
+  select j;
+//Equivalent to 
+var query = Observable.Range(1, 5)
+  .Where(i=>i%2==0)
+  .SelectMany(GetSubValues);
+```
+쿼리 이해 구문을 사용하면 쿼리 범위에서 다른 변수에 쉽게 액세스 할 수 있다는 장점이 있습니다. 이 예에서는 소스의 값과 하위 값을 모두 anon 유형으로 선택합니다.
+``` csharp
+var query = from i in Observable.Range(1, 5)
+  where i%2==0
+  from j in GetSubValues(i)
+  select new {i, j};
+query.Dump("SelectMany");
+/*
+Output
+
+SelectMany-->{ i = 2, j = 20 }
+SelectMany-->{ i = 4, j = 40 }
+SelectMany-->{ i = 2, j = 21 }
+SelectMany-->{ i = 4, j = 41 }
+SelectMany-->{ i = 2, j = 22 }
+SelectMany-->{ i = 4, j = 42 }
+SelectMany completed
+*/
+```
+
+## 정리
+Part 2에서 우리는 결론을 내릴 수 있습니다.이 주요 takeaways 는 독자가 Rx의 주요 원리를 이해할 수 있도록하는 것입니다 : 기능적 구성. 파트 2를 진행하면서 예제는 점점 더 복잡해졌습니다. 우리는 복잡한 쿼리를 작성하기 위해 LINQ의 기능을 함께 사용하여 확장 방법을 체인화했습니다.
+
+우리는 한 번에 모든 연산자를 다루려고하지 않았으며 그룹으로 접근했습니다.
+* Creation
+* Reduction
+* Inspection
+* Aggregation
+* Transformation
+
+연산자의 더 깊은 분석에서 우리는 대부분의 연산자가 사실 고차원 함수 개념의 전문화라는 것을 알게되었습니다. 우리는 그것들을 함수형 프로그래밍의 ABC라고 명명했습니다 :
+
+* Anamorphism, aka: Ana
+  * Unfold
+  * Generate
+* Bind, aka: Map
+  * SelectMany
+  * Projection
+  * Transform
+* Catamorphism, aka: Cata
+  * Fold
+  * Reduce
+  * Accumulate
+  * Inject
+
+이제 시퀀스가 어떻게 조작 될 수 있는지에 대해 깊이 이해하고 있다고 느껴야합니다. 그러나 우리가 지금까지 배웠던 것은 모두 대부분 IEnumerable 시퀀스에도 적용될 수 있습니다. Rx는 SelectMany 연산자에서 보았 듯이 IEnumerable 세계에서 많은 사람들이 처리하게 될 것보다 훨씬 더 복잡 할 수 있습니다. 이 책의 다음 부분에서는 Rx의 비동기 특성과 관련된 기능을 살펴 보겠습니다. 지금까지 구축 한 토대 위에 Rx의 훨씬 더 도전적이고 흥미로운 기능을 해결할 수 있어야합니다.
