@@ -88,6 +88,8 @@ Also received A at index 3
 Also received B at index 4
 Also received C at index 5
 2nd completed
+
+즉, index변수를 두개의 subscribe가 공유하여 의도하지 않은 결과를 얻게됨.
 */
 ```
 
