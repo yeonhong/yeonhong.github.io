@@ -8,14 +8,14 @@ categories:
 tags:
   - intro to RX
   - Reactive Programming
-link: "http://http://introtorx.com/Content/v1.0.10621.0/11_AdvancedErrorHandling.html"
+link: "http://introtorx.com/Content/v1.0.10621.0/11_AdvancedErrorHandling.html"
 ---
 
-# Advanced error handling
+## Advanced error handling
 
 예외가 발생합니다. 예외 자체는 나쁘지도 좋지도 않지만 우리가 키우거나 잡을 수있는 방법이 있습니다. 일부 예외는 예측할 수 있으며 DivideByZeroException과 같이 부적절한 코드로 인해 발생합니다. FileNotFoundException 또는 TimeoutException과 같은 I / O 예외와 같은 방어적인 코딩을 사용하면 다른 예외를 방지 할 수 없습니다. 이러한 경우 예외를 적절히 처리해야합니다. 사용자에게 일종의 오류 메시지를 제공하거나 오류를 기록하거나 재 시도하는 것은 이러한 예외를 처리 할 수있는 모든 잠재적 인 방법입니다.
 
-Observer <T> 인터페이스 및 Subscribe 확장 메서드는 오류로 종료되는 시퀀스를 처리 할 수있는 기능을 제공하지만 시퀀스가 종료 된 상태로 둡니다. 또한 다른 예외 유형을 처리 할 수있는 방법을 제공하지 않습니다. 오류 처리기를 구성하여 모나드에 남아있게하는 기능적 접근 방식이 더 유용 할 것입니다.
+Observer<T> 인터페이스 및 Subscribe 확장 메서드는 오류로 종료되는 시퀀스를 처리 할 수있는 기능을 제공하지만 시퀀스가 종료 된 상태로 둡니다. 또한 다른 예외 유형을 처리 할 수있는 방법을 제공하지 않습니다. 오류 처리기를 구성하여 모나드에 남아있게하는 기능적 접근 방식이 더 유용 할 것입니다.
 
 ## Control flow constructs
 
@@ -31,7 +31,7 @@ SEH의 catch(Structured Exception Handling)를 사용하면, 예외를 삼키는
 
 ``` csharp
 public static IObservable<TSource> Catch<TSource>(
-  this IObservable<TSource> first, 
+  this IObservable<TSource> first,
   IObservable<TSource> second)
 {
   ...
@@ -44,7 +44,7 @@ Rx를 사용하면 SEH와 비슷한 방식으로 예외를 포착하고 삼킬 �
 
 우리는 marble 다이어그램으로 이런 예외를 삼킨 예외를 나타낼 수 있습니다.
 
-```
+``` csharp
 S1--1--2--3--X
 S2            -|
 R --1--2--3----|
@@ -97,8 +97,8 @@ Rx는 또한이 문제를 해결하기 위해 Catch의 오버로드를 제공합
 
 ``` csharp
 public static IObservable<TSource> Catch<TSource, TException>(
-  this IObservable<TSource> source, 
-  Func<TException, IObservable<TSource>> handler) 
+  this IObservable<TSource> source,
+  Func<TException, IObservable<TSource>> handler)
   where TException : Exception
 {
   ...
@@ -141,4 +141,6 @@ Catch-->2
 Catch failed-->Fail!
 */
 ```
+
+### Finally
 
